@@ -1,0 +1,13 @@
+{
+  "name": "tix",
+  "version": "1.0.0",
+  "author": "akeamc <ake@amcoff.net>",
+  "license": "MIT",
+  "devDependencies": {
+    "tailwindcss": "^3.4.0",
+    "tailwindcss-animate": "^1.0.7"
+  },
+  "scripts": {
+    "tailwind": "tailwindcss -i ./input.css -o ./public/tailwind.css"
+  }
+}
