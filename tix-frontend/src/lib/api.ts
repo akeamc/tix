@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useOrderStore } from "./state";
 
-const API_URL = "http://192.168.0.3:8000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export interface CreateOrder {
   email: string;
