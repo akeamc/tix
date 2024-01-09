@@ -46,9 +46,8 @@ export default function PaymentRequest({
         </span>
       </h1>
       <p className="text-gray-700 mb-2">
-        Använd Swish för att slutföra köpet. Skanna QR-koden eller fyll i
-        uppgifterna för hand –{" "}
-        <strong>var noga med att ange rätt meddelande.</strong>
+        Använd Swish för att slutföra köpet och tryck på &quot;Klar&quot; när du
+        har betalat.
       </p>
       <SwishQr payee="123-345 69 51" amount={order.amount} message={order.id} />
       <button

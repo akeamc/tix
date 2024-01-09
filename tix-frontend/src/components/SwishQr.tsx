@@ -1,3 +1,4 @@
+import { SwishPayment } from "@/app/api/qr/route";
 import classNames from "classnames";
 import { PropsWithChildren } from "react";
 
@@ -28,9 +29,32 @@ export default function SwishQr({ payee, amount, message }: SwishQrProps) {
     payee,
   )}&amount=${amount}&message=${encodeURIComponent(message)}`;
 
+  const payment: SwishPayment = {
+    payee: {
+      value: payee,
+      editable: false,
+    },
+    amount: {
+      value: amount,
+      editable: false,
+    },
+    message: {
+      value: message,
+      editable: false,
+    },
+  };
+
   return (
     <div className="flex max-sm:flex-col gap-4">
-      <div className="border rounded-xl overflow-hidden bg-white aspect-square shadow-sm sm:basis-64">
+      <a
+        href={`swish://payment?data=${encodeURIComponent(
+          JSON.stringify(payment),
+        )}`}
+        className="sm:hidden bg-black text-white shadow-sm p-4 rounded-lg text-lg font-medium text-center"
+      >
+        Öppna Swish
+      </a>
+      <div className="border rounded-xl overflow-hidden bg-white aspect-square shadow-sm sm:basis-64 max-sm:hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           className={classNames("aspect-square m-[8%] shrink-0")}

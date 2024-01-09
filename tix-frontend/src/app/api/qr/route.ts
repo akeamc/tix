@@ -1,7 +1,6 @@
 import { NextRequest } from "next/server";
 
-export interface QrRequest {
-  format: "jpg" | "png" | "svg";
+export interface SwishPayment {
   payee: {
     value: string;
     editable: boolean;
@@ -18,6 +17,10 @@ export interface QrRequest {
     value: string;
     editable: boolean;
   };
+}
+
+export interface QrRequest extends SwishPayment {
+  format: "jpg" | "png" | "svg";
   /**
    * Size of the QR code. The code is a square, so width and height are the
    * same. Not required if the format is svg. Minimum 300.
