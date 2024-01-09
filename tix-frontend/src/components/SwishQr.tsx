@@ -30,6 +30,7 @@ export default function SwishQr({ payee, amount, message }: SwishQrProps) {
   )}&amount=${amount}&message=${encodeURIComponent(message)}`;
 
   const payment = {
+    version: 1,
     payee: {
       value: payee,
     },
