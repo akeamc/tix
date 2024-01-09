@@ -29,14 +29,12 @@ export default function SwishQr({ payee, amount, message }: SwishQrProps) {
     payee,
   )}&amount=${amount}&message=${encodeURIComponent(message)}`;
 
-  const payment: SwishPayment = {
+  const payment = {
     payee: {
       value: payee,
-      editable: false,
     },
     amount: {
       value: amount,
-      editable: false,
     },
     message: {
       value: message,
