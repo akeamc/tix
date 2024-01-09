@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useOrderStore } from "./state";
+import { useEffect } from "react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -89,10 +90,14 @@ export async function getTickets(
   return res.json();
 }
 
-export async function getOrder(id: string, email: string): Promise<Order> {
+export async function getOrder(id: string, email: string): Promise<Order | null> {
   const res = await fetch(
     `${API_URL}/orders/${id}?email=${encodeURIComponent(email)}`,
   );
+
+  if (res.status === 404) {
+    return null;
+  }
 
   if (!res.ok) {
     throw new Error("Failed to get order");
@@ -120,11 +125,20 @@ export async function getTicketsRemaining(): Promise<number> {
 }
 
 export function useOrder() {
-  const { details } = useOrderStore();
+  const { details, setDetails } = useOrderStore();
 
-  return useQuery({
+  const q = useQuery({
     queryKey: ["orders", details?.id],
     enabled: !!details,
     queryFn: () => getOrder(details!.id, details!.email),
   });
+
+  useEffect(() => {
+    // order was deleted
+    if (q.data === null) {
+      setDetails(null);
+    }
+  }, [q.data, setDetails]);
+
+  return q;
 }

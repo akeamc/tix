@@ -11,7 +11,7 @@ use axum::{
 use clap::Parser;
 use lettre::{
     message::Mailbox, transport::smtp::authentication::Credentials, AsyncSmtpTransport,
-    SmtpTransport, Tokio1Executor,
+    Tokio1Executor,
 };
 use serde::{Deserialize, Serialize};
 use sqlx::{postgres::PgQueryResult, PgPool};
@@ -20,6 +20,7 @@ use tix_api::{
     order::{Order, OrderId},
 };
 use tower_http::{cors::CorsLayer, trace::TraceLayer};
+use tracing::error;
 use uuid::Uuid;
 
 #[derive(Debug, Parser)]
@@ -50,19 +51,26 @@ enum Error {
     OrderCanceled,
     #[error("SMTP error")]
     Smtp(#[from] lettre::transport::smtp::Error),
+    #[error("order not found")]
+    OrderNotFound,
 }
 
 impl IntoResponse for Error {
     fn into_response(self) -> axum::response::Response {
-        let status = match self {
-            Self::Database(_) | Self::Smtp(_) => StatusCode::INTERNAL_SERVER_ERROR,
+        let status = match &self {
+            Self::Database(e) => {
+                error!(?e);
+                StatusCode::INTERNAL_SERVER_ERROR
+            }
+            Self::Smtp(e) => {
+                error!(?e);
+                StatusCode::INTERNAL_SERVER_ERROR
+            }
             Self::AlreadyPaid | Self::TooManyTickets | Self::OrderCanceled => {
                 StatusCode::BAD_REQUEST
             }
+            Self::OrderNotFound => StatusCode::NOT_FOUND,
         };
-
-        // log the error
-        tracing::error!(?self);
 
         (status, self.to_string()).into_response()
     }
@@ -117,8 +125,8 @@ where
             order_id.as_ref(),
             email,
         )
-        .fetch_one(&state.pool)
-        .await?;
+        .fetch_optional(&state.pool)
+        .await?.ok_or(Error::OrderNotFound)?;
 
         Ok(Self { order })
     }
@@ -285,7 +293,6 @@ async fn main() -> anyhow::Result<()> {
         .build();
     let pool = PgPool::connect(&options.database_url).await?;
     sqlx::migrate!().run(&pool).await?;
-
 
     let app = Router::new()
         .route("/orders", post(create_order))

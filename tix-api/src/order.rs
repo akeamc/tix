@@ -2,9 +2,7 @@ use std::{iter, fmt};
 
 use rand::Rng;
 use serde::{Deserialize, Serialize};
-use sqlx::Postgres;
 use time::OffsetDateTime;
-use uuid::Uuid;
 
 fn unambiguous_str(len: usize) -> String {
     const CHARSET: &[u8] = b"CDEFHJKMNPRTVWXY2345689";
@@ -30,6 +28,7 @@ impl AsRef<str> for OrderId {
     }
 }
 
+#[allow(clippy::new_without_default)]
 impl OrderId {
     pub fn new() -> Self {
         Self(unambiguous_str(8))

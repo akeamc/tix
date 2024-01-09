@@ -9,7 +9,9 @@ const jetbrains = JetBrains_Mono({
   variable: "--font-jetbrains",
 });
 
-export const metadata: Metadata = {};
+export const metadata: Metadata = {
+  title: "STHLM VISION 2024",
+};
 
 export default function RootLayout({
   children,
