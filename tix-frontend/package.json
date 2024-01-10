@@ -12,6 +12,7 @@
     "@tanstack/query-sync-storage-persister": "^5.17.9",
     "@tanstack/react-query": "^5.17.9",
     "@tanstack/react-query-persist-client": "^5.17.9",
+    "libphonenumber-js": "^1.10.53",
     "next": "14.0.4",
     "react": "^18",
     "react-dom": "^18",

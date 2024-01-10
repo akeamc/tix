@@ -3,6 +3,7 @@
 import { Order, getOrders, uploadSwishReport, useTickets } from "@/lib/api";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import classNames from "classnames";
+import { parsePhoneNumber } from "libphonenumber-js";
 import { ButtonHTMLAttributes, DetailedHTMLProps, useState } from "react";
 import { RefreshCw, Upload } from "react-feather";
 
@@ -18,6 +19,7 @@ function formatDateTime(date: string) {
 
 function Row({ order, selected, onSelectedChange }: { order: Order, selected: boolean, onSelectedChange: (selected: boolean) => void; }) {
   const { data: tickets } = useTickets(order.id);
+  const phone = parsePhoneNumber(order.phone, "SE");
 
   return (
     <tr className={classNames({ "text-gray-500": order.canceled_at })}>
@@ -31,7 +33,7 @@ function Row({ order, selected, onSelectedChange }: { order: Order, selected: bo
       <td className="border px-1 py-1.5 font-mono">{order.id}</td>
       <td className="border px-1 py-1.5">{order.name}</td>
       <td className="border px-1 py-1.5">{order.email}</td>
-      <td className="border px-1 py-1.5">{order.phone}</td>
+      <td className="border px-1 py-1.5"><a className="hover:underline" href={phone.getURI()}>{phone.formatNational()}</a></td>
       <td className="border px-1 py-1.5">{formatDateTime(order.created_at)}</td>
       <td className="border px-1 py-1.5">{order.paid_at ? formatDateTime(order.paid_at) : "-"}</td>
       <td className="border px-1 py-1.5">{order.canceled_at ? formatDateTime(order.canceled_at) : "-"}</td>
