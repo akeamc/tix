@@ -1,4 +1,4 @@
-use std::{iter, fmt};
+use std::{fmt, iter};
 
 use rand::Rng;
 use serde::{Deserialize, Serialize};

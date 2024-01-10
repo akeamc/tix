@@ -1,4 +1,3 @@
-
 use lettre::{message::Mailbox, AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor};
 
 use crate::{order::Order, ELEVKAREN_SWISH};
@@ -8,12 +7,12 @@ pub async fn send_order_confirmation(
     to: Mailbox,
     order: &Order,
 ) -> Result<(), lettre::transport::smtp::Error> {
-  let sender: Mailbox = "STHLM VISION <sthlmvision@sodralat.in>".parse().unwrap();
+    let from: Mailbox = "STHLM VISION <sthlmvision@sodralat.in>".parse().unwrap();
     let message = Message::builder()
-        .from(sender.clone())
+        .from(from.clone())
         .to(to)
-        .bcc(sender)
-        .subject("Orderbekräftelse från STHLM VISION")
+        .bcc(from)
+        .subject(format!("Order {}", order.id))
         .body(indoc::formatdoc!(
             "
                 Hej {name}!

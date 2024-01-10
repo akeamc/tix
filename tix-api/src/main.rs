@@ -10,8 +10,9 @@ use axum::{
 };
 use clap::Parser;
 use lettre::{
-    message::Mailbox, transport::smtp::authentication::Credentials, AsyncSmtpTransport,
-    Tokio1Executor,
+    message::Mailbox,
+    transport::smtp::{authentication::Credentials, extension::ClientId},
+    AsyncSmtpTransport, Tokio1Executor,
 };
 use serde::{Deserialize, Serialize};
 use sqlx::{postgres::PgQueryResult, PgPool};
@@ -126,7 +127,8 @@ where
             email,
         )
         .fetch_optional(&state.pool)
-        .await?.ok_or(Error::OrderNotFound)?;
+        .await?
+        .ok_or(Error::OrderNotFound)?;
 
         Ok(Self { order })
     }
@@ -290,6 +292,7 @@ async fn main() -> anyhow::Result<()> {
             options.gmail_username,
             options.gmail_password,
         ))
+        .hello_name(ClientId::Domain("sthlmvision.fly.dev".into()))
         .build();
     let pool = PgPool::connect(&options.database_url).await?;
     sqlx::migrate!().run(&pool).await?;
