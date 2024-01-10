@@ -10,7 +10,6 @@ const jetbrains = JetBrains_Mono({
   variable: "--font-jetbrains",
 });
 
-
 export default function RootLayout({ children }: PropsWithChildren<{}>) {
   return (
     <QueryClientProvider>
