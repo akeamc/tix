@@ -250,6 +250,11 @@
   dependencies:
     "@tanstack/query-core" "5.17.9"
 
+"@types/google.accounts@^0.0.14":
+  version "0.0.14"
+  resolved "https://registry.yarnpkg.com/@types/google.accounts/-/google.accounts-0.0.14.tgz#ffc36c30c5107b9bdab115830c85f7e377bc0dea"
+  integrity sha512-HqIVkVzpiLWhlajhQQd4rIV7czanFvXblJI2J1fSrL+VKQuQwwZ63m35D/mI0flsqKE6p/hNrAG0Yn4FD6JvNA==
+
 "@types/json-schema@^7.0.9":
   version "7.0.15"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.15.tgz#596a1747233694d50f6ad8a7869fcb6f56cf5841"

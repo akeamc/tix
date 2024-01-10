@@ -1,4 +1,6 @@
-pub const ELEVKAREN_SWISH: &str = "123-345 69 51";
-
 pub mod email;
+pub mod error;
+pub mod oidc;
 pub mod order;
+pub mod routes;
+pub mod swish;

@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import QueryClientProvider from "@/components/QueryClientProvider";
+import { PropsWithChildren } from "react";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const jetbrains = JetBrains_Mono({
@@ -9,20 +9,13 @@ const jetbrains = JetBrains_Mono({
   variable: "--font-jetbrains",
 });
 
-export const metadata: Metadata = {
-  title: "STHLM VISION 2024",
-};
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: PropsWithChildren<{}>) {
   return (
     <QueryClientProvider>
       <html
         lang="sv"
-        className={`${inter.variable} ${jetbrains.variable} min-h-full bg-black text-white`}
+        className={`${inter.variable} ${jetbrains.variable} min-h-full`}
       >
         <body>{children}</body>
       </html>

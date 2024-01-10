@@ -20,10 +20,11 @@ export interface Order {
   created_at: string;
   paid_at: string | null;
   completed_at: string | null;
+  canceled_at: string | null;
 }
 
 export async function createOrder(req: CreateOrder): Promise<Order> {
-  const res = await fetch(`${API_URL}/orders`, {
+  const res = await request(`/orders`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -41,8 +42,8 @@ export async function createOrder(req: CreateOrder): Promise<Order> {
 }
 
 export async function cancelOrder(id: string, email: string): Promise<Order> {
-  const res = await fetch(
-    `${API_URL}/orders/${id}?email=${encodeURIComponent(email)}`,
+  const res = await request(
+    `/orders/${id}?email=${encodeURIComponent(email)}`,
     {
       method: "DELETE",
     },
@@ -56,8 +57,8 @@ export async function cancelOrder(id: string, email: string): Promise<Order> {
 }
 
 export async function completeOrder(id: string, email: string): Promise<Order> {
-  const res = await fetch(
-    `${API_URL}/orders/${id}/complete?email=${encodeURIComponent(email)}`,
+  const res = await request(
+    `/orders/${id}/complete?email=${encodeURIComponent(email)}`,
     {
       method: "POST",
     },
@@ -79,8 +80,8 @@ export async function getTickets(
   orderId: string,
   email: string,
 ): Promise<Ticket[]> {
-  const res = await fetch(
-    `${API_URL}/orders/${orderId}/tickets?email=${encodeURIComponent(email)}`,
+  const res = await request(
+    `/orders/${orderId}/tickets?email=${encodeURIComponent(email)}`,
   );
 
   if (!res.ok) {
@@ -91,8 +92,8 @@ export async function getTickets(
 }
 
 export async function getOrder(id: string, email: string): Promise<Order | null> {
-  const res = await fetch(
-    `${API_URL}/orders/${id}?email=${encodeURIComponent(email)}`,
+  const res = await request(
+    `/orders/${id}?email=${encodeURIComponent(email)}`,
   );
 
   if (res.status === 404) {
@@ -115,7 +116,7 @@ export function useTickets(order?: Order | null) {
 }
 
 export async function getTicketsRemaining(): Promise<number> {
-  const res = await fetch(`${API_URL}/tickets/remaining`);
+  const res = await request("/tickets/remaining");
 
   if (!res.ok) {
     throw new Error("Failed to get tickets remaining");
@@ -141,4 +142,77 @@ export function useOrder() {
   }, [q.data, setDetails]);
 
   return q;
+}
+
+export interface LoginRequest {
+  id_token: string;
+  nonce: string;
+}
+
+export interface Identity {
+  email: string;
+}
+
+export async function login(req: LoginRequest): Promise<Identity> {
+  const res = await request("/auth/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(req),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to login");
+  }
+
+  return res.json();
+}
+
+export async function getIdentity(): Promise<Identity | null> {
+  const res = await request("/auth");
+
+  if (!res.ok) {
+    return null;
+  }
+
+  return res.json();
+}
+
+export async function request(path: string, init?: RequestInit): Promise<Response> {
+  return fetch(`${API_URL}${path}`, {
+    credentials: "include",
+    ...init
+  });
+}
+
+export async function getOrders(): Promise<Order[]> {
+  const res = await request("/orders");
+
+  if (!res.ok) {
+    throw new Error("Failed to get orders");
+  }
+
+  return res.json();
+}
+
+interface SwishReport {
+  notes: string;
+  transactions: unknown[];
+}
+
+export async function uploadSwishReport(file: File): Promise<SwishReport> {
+  const formData = new FormData();
+  formData.append("file", file);
+  
+  const res = await request("/orders/swish", {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to upload swish report");
+  }
+
+  return res.json();
 }

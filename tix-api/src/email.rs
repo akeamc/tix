@@ -1,6 +1,6 @@
 use lettre::{message::Mailbox, AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor};
 
-use crate::{order::Order, ELEVKAREN_SWISH};
+use crate::{order::Order, swish::ELEVKAREN_NR};
 
 pub async fn send_order_confirmation(
     mailer: &AsyncSmtpTransport<Tokio1Executor>,
@@ -30,7 +30,7 @@ pub async fn send_order_confirmation(
             name = order.name,
             id = order.id,
             amount = order.amount,
-            payee = ELEVKAREN_SWISH,
+            payee = ELEVKAREN_NR,
         ))
         .unwrap();
 

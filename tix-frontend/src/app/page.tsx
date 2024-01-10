@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="mx-auto max-w-screen-lg flex flex-col items-center justify-center min-h-screen p-4 text-center">
+    <main className="mx-auto max-w-screen-lg flex flex-col items-center justify-center min-h-screen p-4 text-center bg-black text-white">
       <h1 className="text-8xl md:text-9xl font-bold tracking-tight leading-none mb-6 md:mb-8">
         STHLM VISION 2024
       </h1>
