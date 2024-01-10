@@ -1,9 +1,9 @@
 "use client";
 
-import { Order, getOrders, uploadSwishReport } from "@/lib/api";
+import { Order, getOrders, uploadSwishReport, useTickets } from "@/lib/api";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import classNames from "classnames";
-import { ButtonHTMLAttributes, DetailedHTMLProps, PropsWithChildren, useRef, useState } from "react";
+import { ButtonHTMLAttributes, DetailedHTMLProps, useState } from "react";
 import { RefreshCw, Upload } from "react-feather";
 
 function formatDateTime(date: string) {
@@ -17,6 +17,8 @@ function formatDateTime(date: string) {
 }
 
 function Row({ order, selected, onSelectedChange }: { order: Order, selected: boolean, onSelectedChange: (selected: boolean) => void; }) {
+  const { data: tickets } = useTickets(order.id);
+
   return (
     <tr className={classNames({ "text-gray-500": order.canceled_at })}>
       <td className="border p-1">
@@ -26,14 +28,15 @@ function Row({ order, selected, onSelectedChange }: { order: Order, selected: bo
           }} />
         </div>
       </td>
-      <td className="border p-1 font-mono">{order.id}</td>
-      <td className="border p-1">{order.name}</td>
-      <td className="border p-1">{order.email}</td>
-      <td className="border p-1">{order.phone}</td>
-      <td className="border p-1">{formatDateTime(order.created_at)}</td>
-      <td className="border p-1">{order.paid_at ? formatDateTime(order.paid_at) : "-"}</td>
-      <td className="border p-1">{order.canceled_at ? formatDateTime(order.canceled_at) : "-"}</td>
-      <td className="border p-1">{order.amount.toLocaleString("sv", { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</td>
+      <td className="border px-1 py-1.5 font-mono">{order.id}</td>
+      <td className="border px-1 py-1.5">{order.name}</td>
+      <td className="border px-1 py-1.5">{order.email}</td>
+      <td className="border px-1 py-1.5">{order.phone}</td>
+      <td className="border px-1 py-1.5">{formatDateTime(order.created_at)}</td>
+      <td className="border px-1 py-1.5">{order.paid_at ? formatDateTime(order.paid_at) : "-"}</td>
+      <td className="border px-1 py-1.5">{order.canceled_at ? formatDateTime(order.canceled_at) : "-"}</td>
+      <td className="border px-1 py-1.5 text-right">{tickets?.length}</td>
+      <td className="border px-1 py-1.5 text-right">{order.amount.toLocaleString("sv", { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</td>
     </tr>
   )
 }
@@ -110,6 +113,7 @@ export default function Orders() {
               <th className="text-left p-1 py-2 font-semibold">Skapad</th>
               <th className="text-left p-1 py-2 font-semibold">Betald</th>
               <th className="text-left p-1 py-2 font-semibold">Avbruten</th>
+              <th className="text-left p-1 py-2 font-semibold">Biljetter</th>
               <th className="text-left p-1 py-2 font-semibold">Pris</th>
             </tr>
           </thead>

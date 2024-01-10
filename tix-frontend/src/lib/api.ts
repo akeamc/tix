@@ -78,11 +78,13 @@ interface Ticket {
 
 export async function getTickets(
   orderId: string,
-  email: string,
+  email?: string,
 ): Promise<Ticket[]> {
-  const res = await request(
-    `/orders/${orderId}/tickets?email=${encodeURIComponent(email)}`,
-  );
+  let path = `/orders/${orderId}/tickets`;
+  if (email) {
+    path += "?email=" + encodeURIComponent(email);
+  }
+  const res = await request(path);
 
   if (!res.ok) {
     throw new Error("Failed to get tickets");
@@ -107,11 +109,11 @@ export async function getOrder(id: string, email: string): Promise<Order | null>
   return res.json();
 }
 
-export function useTickets(order?: Order | null) {
+export function useTickets(id?: string, email?: string) {
   return useQuery({
-    queryKey: ["tickets", order?.id, order?.email],
-    enabled: !!order,
-    queryFn: () => getTickets(order!.id, order!.email),
+    queryKey: ["orders", id, "tickets"],
+    enabled: !!id,
+    queryFn: () => getTickets(id!, email!),
   });
 }
 

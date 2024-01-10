@@ -6,7 +6,7 @@ use axum::{
     Json, Router,
 };
 use axum_extra::extract::{
-    cookie::{Cookie, Key},
+    cookie::{Cookie, Key, SameSite},
     PrivateCookieJar,
 };
 use openidconnect::{core::CoreIdToken, Nonce};
@@ -73,6 +73,7 @@ async fn login(
         .http_only(true)
         .path("/")
         .permanent()
+        .same_site(SameSite::None)
         .build();
     let identity = Identity { email };
 

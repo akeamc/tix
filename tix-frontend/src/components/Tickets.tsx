@@ -4,7 +4,7 @@ import Ticket from "./Ticket";
 
 export default function Tickets({ order }: { order: Order | null }) {
   const [loaded, setLoaded] = useState(false);
-  const { data } = useTickets(order);
+  const { data } = useTickets(order?.id, order?.email);
 
   useEffect(() => {
     setLoaded(true);

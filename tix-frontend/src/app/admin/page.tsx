@@ -1,11 +1,13 @@
-import Orders from "@/components/admin/Orders";
 import { GoogleLoginButton } from "@/components/auth";
+import Link from "next/link";
 
 export default function AdminHome() {
   return (
     <>
       <GoogleLoginButton />
-      <Orders />
+      <Link href="/admin/orders">
+        Ordrar
+      </Link>
     </>
   )
 }
