@@ -183,7 +183,11 @@ async fn get_tickets(order: Order, state: AppState) -> Result<impl IntoResponse>
 async fn swish(mut multipart: axum::extract::Multipart) -> Result<impl IntoResponse> {
     let field = multipart.next_field().await.unwrap().unwrap();
     let data = field.bytes().await.unwrap();
-    let data = swish::read_latin1(&data).unwrap();
+    let data = swish::csv::read_latin1(&data)
+        .unwrap()
+        .into_iter()
+        .map(Into::into)
+        .collect::<Vec<swish::Transaction>>();
 
     Ok(Json(data))
 }

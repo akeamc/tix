@@ -1,4 +1,7 @@
-use lettre::{message::Mailbox, AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor};
+use lettre::{
+    message::{Mailbox, SinglePart},
+    AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor,
+};
 
 use crate::{order::Order, swish::ELEVKAREN_NR};
 
@@ -13,7 +16,7 @@ pub async fn send_order_confirmation(
         .to(to)
         .bcc(from)
         .subject(format!("Order {}", order.id))
-        .body(indoc::formatdoc!(
+        .singlepart(SinglePart::plain(indoc::formatdoc!(
             "
                 Hej {name}!
 
@@ -31,7 +34,7 @@ pub async fn send_order_confirmation(
             id = order.id,
             amount = order.amount,
             payee = ELEVKAREN_NR,
-        ))
+        )))
         .unwrap();
 
     mailer.send(message).await?;
