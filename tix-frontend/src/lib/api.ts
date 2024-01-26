@@ -93,10 +93,11 @@ export async function getTickets(
   return res.json();
 }
 
-export async function getOrder(id: string, email: string): Promise<Order | null> {
-  const res = await request(
-    `/orders/${id}?email=${encodeURIComponent(email)}`,
-  );
+export async function getOrder(
+  id: string,
+  email: string,
+): Promise<Order | null> {
+  const res = await request(`/orders/${id}?email=${encodeURIComponent(email)}`);
 
   if (res.status === 404) {
     return null;
@@ -181,10 +182,13 @@ export async function getIdentity(): Promise<Identity | null> {
   return res.json();
 }
 
-export async function request(path: string, init?: RequestInit): Promise<Response> {
+export async function request(
+  path: string,
+  init?: RequestInit,
+): Promise<Response> {
   return fetch(`${API_URL}${path}`, {
     credentials: "include",
-    ...init
+    ...init,
   });
 }
 
@@ -206,7 +210,7 @@ interface SwishReport {
 export async function uploadSwishReport(file: File): Promise<SwishReport> {
   const formData = new FormData();
   formData.append("file", file);
-  
+
   const res = await request("/orders/swish", {
     method: "POST",
     body: formData,

@@ -3,7 +3,15 @@
 import { Identity, LoginRequest, getIdentity, login } from "@/lib/api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Script from "next/script";
-import { PropsWithChildren, createContext, useContext, useEffect, useId, useRef, useState } from "react";
+import {
+  PropsWithChildren,
+  createContext,
+  useContext,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from "react";
 
 const CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
@@ -21,7 +29,7 @@ export const GSIProvider = ({ children }: PropsWithChildren<{}>) => {
 
   const onResponse = (
     res: google.accounts.id.CredentialResponse,
-    nonce: string
+    nonce: string,
   ) => {
     login({
       id_token: res.credential,
@@ -91,7 +99,7 @@ export function GoogleLoginButton() {
 }
 
 export const useAuth = () => {
-  const {data: identity} =useQuery({
+  const { data: identity } = useQuery({
     queryKey: ["identity"],
     queryFn: getIdentity,
   });
@@ -100,5 +108,5 @@ export const useAuth = () => {
     identity,
     authenticated: !!identity,
     unauthenticated: identity === null,
-  }
-}
+  };
+};

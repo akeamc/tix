@@ -41,22 +41,27 @@ function QuantityField({
   price: number;
 }) {
   return (
-    <label className="block">
-      <p className="mb-1 font-medium text-sm">Antal biljetter</p>
-      <p className="flex items-center gap-2">
-        <input
-          type="number"
-          name="count"
-          value={value}
-          onChange={(e) => onChange(parseInt(e.target.value))}
-          className="border-gray-200 border p-2 rounded-lg text-sm w-full"
-          min={1}
-          max={10}
-          required
-        />
-        <span className="grow whitespace-nowrap">à {price}&nbsp;kr</span>
+    <div>
+      <label className="block">
+        <p className="mb-1 font-medium text-sm">Antal biljetter</p>
+        <p className="flex items-center gap-2">
+          <input
+            type="number"
+            name="count"
+            value={value}
+            onChange={(e) => onChange(parseInt(e.target.value))}
+            className="border-gray-200 border p-2 rounded-lg text-sm w-full"
+            min={1}
+            max={10}
+            required
+          />
+          <span className="grow whitespace-nowrap">à {price}&nbsp;kr</span>
+        </p>
+      </label>
+      <p className="text-gray-500 text-xs mt-1">
+        I biljettpriset ingår garderob.
       </p>
-    </label>
+    </div>
   );
 }
 

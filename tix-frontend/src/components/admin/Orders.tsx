@@ -17,7 +17,15 @@ function formatDateTime(date: string) {
   });
 }
 
-function Row({ order, selected, onSelectedChange }: { order: Order, selected: boolean, onSelectedChange: (selected: boolean) => void; }) {
+function Row({
+  order,
+  selected,
+  onSelectedChange,
+}: {
+  order: Order;
+  selected: boolean;
+  onSelectedChange: (selected: boolean) => void;
+}) {
   const { data: tickets } = useTickets(order.id);
   const phone = parsePhoneNumber(order.phone, "SE");
 
@@ -25,36 +33,70 @@ function Row({ order, selected, onSelectedChange }: { order: Order, selected: bo
     <tr className={classNames({ "text-gray-500": order.canceled_at })}>
       <td className="border p-1">
         <div className="flex items-center justify-center">
-          <input type="checkbox" checked={selected} onChange={(e) => {
-            onSelectedChange(e.target.checked);
-          }} />
+          <input
+            type="checkbox"
+            checked={selected}
+            onChange={(e) => {
+              onSelectedChange(e.target.checked);
+            }}
+          />
         </div>
       </td>
       <td className="border px-1 py-1.5 font-mono">{order.id}</td>
       <td className="border px-1 py-1.5">{order.name}</td>
       <td className="border px-1 py-1.5">{order.email}</td>
-      <td className="border px-1 py-1.5"><a className="hover:underline" href={phone.getURI()}>{phone.formatNational()}</a></td>
+      <td className="border px-1 py-1.5">
+        <a className="hover:underline" href={phone.getURI()}>
+          {phone.formatNational()}
+        </a>
+      </td>
       <td className="border px-1 py-1.5">{formatDateTime(order.created_at)}</td>
-      <td className="border px-1 py-1.5">{order.paid_at ? formatDateTime(order.paid_at) : "-"}</td>
-      <td className="border px-1 py-1.5">{order.canceled_at ? formatDateTime(order.canceled_at) : "-"}</td>
+      <td className="border px-1 py-1.5">
+        {order.paid_at ? formatDateTime(order.paid_at) : "-"}
+      </td>
+      <td className="border px-1 py-1.5">
+        {order.canceled_at ? formatDateTime(order.canceled_at) : "-"}
+      </td>
       <td className="border px-1 py-1.5 text-right">{tickets?.length}</td>
-      <td className="border px-1 py-1.5 text-right">{order.amount.toLocaleString("sv", { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</td>
+      <td className="border px-1 py-1.5 text-right">
+        {order.amount.toLocaleString("sv", {
+          maximumFractionDigits: 2,
+          minimumFractionDigits: 2,
+        })}
+      </td>
     </tr>
-  )
+  );
 }
 
-const useOrders = () => useQuery({
-  queryKey: ["orders"],
-  queryFn: getOrders,
-  refetchInterval: 10000,
-});
+const useOrders = () =>
+  useQuery({
+    queryKey: ["orders"],
+    queryFn: getOrders,
+    refetchInterval: 10000,
+  });
 
-function Button({ children, className, disabled, ...props }: DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>) {
+function Button({
+  children,
+  className,
+  disabled,
+  ...props
+}: DetailedHTMLProps<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  HTMLButtonElement
+>) {
   return (
-    <button disabled={disabled} className={classNames("px-2 py-1 border font-medium rounded text-xs flex gap-2 items-center shadow-sm hover:bg-gray-100 active:shadow-none active:bg-gray-200 [&>svg]:size-4", { "text-gray-500": disabled }, className)} {...props}>
+    <button
+      disabled={disabled}
+      className={classNames(
+        "px-2 py-1 border font-medium rounded text-xs flex gap-2 items-center shadow-sm hover:bg-gray-100 active:shadow-none active:bg-gray-200 [&>svg]:size-4",
+        { "text-gray-500": disabled },
+        className,
+      )}
+      {...props}
+    >
       {children}
     </button>
-  )
+  );
 }
 
 function SwishImport() {
@@ -67,12 +109,19 @@ function SwishImport() {
       }
 
       return uploadSwishReport(file);
-    }
+    },
   });
 
   return (
     <>
-      <input type="file" onChange={(e) => { if (e.target.files) { setFile(e.target.files[0]) } }} />
+      <input
+        type="file"
+        onChange={(e) => {
+          if (e.target.files) {
+            setFile(e.target.files[0]);
+          }
+        }}
+      />
       <Button onClick={() => mutate()}>
         <Upload />
         Importera Swishrapport
@@ -90,7 +139,11 @@ function Toolbar() {
         <RefreshCw className={isFetching ? "animate-spin" : undefined} />
         Uppdatera
       </Button>
-      {error && <div className="text-red-500 text-xs bg-red-50 rounded px-2 py-1">{error.message}</div>}
+      {error && (
+        <div className="text-red-500 text-xs bg-red-50 rounded px-2 py-1">
+          {error.message}
+        </div>
+      )}
       <SwishImport />
     </div>
   );
@@ -111,7 +164,9 @@ export default function Orders() {
               <th className="text-left p-1 py-2 font-semibold">Ordernummer</th>
               <th className="text-left p-1 py-2 font-semibold">Namn</th>
               <th className="text-left p-1 py-2 font-semibold">E-postadress</th>
-              <th className="text-left p-1 py-2 font-semibold">Telefonnummer</th>
+              <th className="text-left p-1 py-2 font-semibold">
+                Telefonnummer
+              </th>
               <th className="text-left p-1 py-2 font-semibold">Skapad</th>
               <th className="text-left p-1 py-2 font-semibold">Betald</th>
               <th className="text-left p-1 py-2 font-semibold">Avbruten</th>
@@ -120,20 +175,28 @@ export default function Orders() {
             </tr>
           </thead>
           <tbody>
-            {orders?.map((order) => <Row key={order.id} order={order} selected={selected.includes(order.id)} onSelectedChange={(v) => {
-              if (v) {
-                setSelected([...selected, order.id]);
-              } else {
-                setSelected(selected.filter((id) => id !== order.id));
-              }
-            }} />)}
+            {orders?.map((order) => (
+              <Row
+                key={order.id}
+                order={order}
+                selected={selected.includes(order.id)}
+                onSelectedChange={(v) => {
+                  if (v) {
+                    setSelected([...selected, order.id]);
+                  } else {
+                    setSelected(selected.filter((id) => id !== order.id));
+                  }
+                }}
+              />
+            ))}
           </tbody>
         </table>
-        {orders !== undefined && <div className="text-sm text-gray-700 mt-2">
-          {orders?.length} ordrar
-        </div>}
+        {orders !== undefined && (
+          <div className="text-sm text-gray-700 mt-2">
+            {orders?.length} ordrar
+          </div>
+        )}
       </div>
     </div>
-
-  )
+  );
 }

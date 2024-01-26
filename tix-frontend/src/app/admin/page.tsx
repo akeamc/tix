@@ -5,9 +5,7 @@ export default function AdminHome() {
   return (
     <>
       <GoogleLoginButton />
-      <Link href="/admin/orders">
-        Ordrar
-      </Link>
+      <Link href="/admin/orders">Ordrar</Link>
     </>
-  )
+  );
 }
