@@ -95,3 +95,9 @@ pub struct Transaction {
     /// The one who received the money.
     pub payee: Part,
 }
+
+pub fn parse_transactions(input: &[u8]) -> ::csv::Result<Vec<Transaction>> {
+    let (s, _, _) = encoding_rs::WINDOWS_1252.decode(input);
+
+    csv::read(&s).map(|r| r.map(Into::into)).collect()
+}

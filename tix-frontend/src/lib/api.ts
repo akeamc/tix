@@ -172,6 +172,16 @@ export async function login(req: LoginRequest): Promise<Identity> {
   return res.json();
 }
 
+export async function logout(): Promise<void> {
+  const res = await request("/auth/logout", {
+    method: "POST",
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to logout");
+  }
+}
+
 export async function getIdentity(): Promise<Identity | null> {
   const res = await request("/auth");
 
@@ -202,12 +212,35 @@ export async function getOrders(): Promise<Order[]> {
   return res.json();
 }
 
-interface SwishReport {
-  notes: string;
-  transactions: unknown[];
+export const useOrders = () =>
+  useQuery({
+    queryKey: ["orders"],
+    queryFn: getOrders,
+    refetchInterval: 10000,
+  });
+
+export interface TicketStats {
+  paid: number;
 }
 
-export async function uploadSwishReport(file: File): Promise<SwishReport> {
+export async function getTicketStats(): Promise<TicketStats> {
+  const res = await request("/tickets/stats");
+
+  if (!res.ok) {
+    throw new Error("Failed to get ticket stats");
+  }
+
+  return res.json();
+}
+
+export const useTicketStats = () =>
+  useQuery({
+    queryKey: ["ticketStats"],
+    queryFn: getTicketStats,
+    refetchInterval: 10000,
+  });
+
+export async function uploadSwishReport(file: File): Promise<void> {
   const formData = new FormData();
   formData.append("file", file);
 
@@ -219,6 +252,4 @@ export async function uploadSwishReport(file: File): Promise<SwishReport> {
   if (!res.ok) {
     throw new Error("Failed to upload swish report");
   }
-
-  return res.json();
 }

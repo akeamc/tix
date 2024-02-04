@@ -1,11 +1,21 @@
 "use client";
 
-import { Order, getOrders, uploadSwishReport, useTickets } from "@/lib/api";
+import {
+  Order,
+  getOrders,
+  getTicketStats,
+  uploadSwishReport,
+  useOrders,
+  useTicketStats,
+  useTickets,
+} from "@/lib/api";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import classNames from "classnames";
 import { parsePhoneNumber } from "libphonenumber-js";
 import { ButtonHTMLAttributes, DetailedHTMLProps, useState } from "react";
 import { RefreshCw, Upload } from "react-feather";
+import SwishImport from "./SwishImport";
+import Button from "../Button";
 
 function formatDateTime(date: string) {
   return new Date(date).toLocaleString("sv", {
@@ -30,7 +40,12 @@ function Row({
   const phone = parsePhoneNumber(order.phone, "SE");
 
   return (
-    <tr className={classNames({ "text-gray-500": order.canceled_at })}>
+    <tr
+      className={classNames({
+        "text-yellow-500 bg-yellow-50": !order.paid_at && !order.canceled_at,
+        "text-gray-400": order.canceled_at,
+      })}
+    >
       <td className="border p-1">
         <div className="flex items-center justify-center">
           <input
@@ -68,68 +83,6 @@ function Row({
   );
 }
 
-const useOrders = () =>
-  useQuery({
-    queryKey: ["orders"],
-    queryFn: getOrders,
-    refetchInterval: 10000,
-  });
-
-function Button({
-  children,
-  className,
-  disabled,
-  ...props
-}: DetailedHTMLProps<
-  ButtonHTMLAttributes<HTMLButtonElement>,
-  HTMLButtonElement
->) {
-  return (
-    <button
-      disabled={disabled}
-      className={classNames(
-        "px-2 py-1 border font-medium rounded text-xs flex gap-2 items-center shadow-sm hover:bg-gray-100 active:shadow-none active:bg-gray-200 [&>svg]:size-4",
-        { "text-gray-500": disabled },
-        className,
-      )}
-      {...props}
-    >
-      {children}
-    </button>
-  );
-}
-
-function SwishImport() {
-  const [file, setFile] = useState<File | null>(null);
-  const { data, mutate } = useMutation({
-    mutationKey: ["swishImport"],
-    mutationFn: async () => {
-      if (!file) {
-        return;
-      }
-
-      return uploadSwishReport(file);
-    },
-  });
-
-  return (
-    <>
-      <input
-        type="file"
-        onChange={(e) => {
-          if (e.target.files) {
-            setFile(e.target.files[0]);
-          }
-        }}
-      />
-      <Button onClick={() => mutate()}>
-        <Upload />
-        Importera Swishrapport
-      </Button>
-    </>
-  );
-}
-
 function Toolbar() {
   const { isFetching, refetch, error } = useOrders();
 
@@ -152,6 +105,7 @@ function Toolbar() {
 export default function Orders() {
   const [selected, setSelected] = useState<string[]>([]);
   const { data: orders } = useOrders();
+  const { data: ticketStats } = useTicketStats();
 
   return (
     <div>
@@ -193,7 +147,7 @@ export default function Orders() {
         </table>
         {orders !== undefined && (
           <div className="text-sm text-gray-700 mt-2">
-            {orders?.length} ordrar
+            {orders?.length} ordrar, {ticketStats?.paid} sålda biljetter
           </div>
         )}
       </div>

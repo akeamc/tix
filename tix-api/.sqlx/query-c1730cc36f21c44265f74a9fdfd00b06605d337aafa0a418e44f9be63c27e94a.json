@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "UPDATE orders SET paid_at = $1 WHERE id = $2 AND amount = $3",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Timestamptz",
+        "Text",
+        "Int4"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "c1730cc36f21c44265f74a9fdfd00b06605d337aafa0a418e44f9be63c27e94a"
+}

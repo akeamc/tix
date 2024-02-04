@@ -1,6 +1,6 @@
 use axum::{
     extract::FromRef,
-    http::request::Parts,
+    http::{request::Parts, StatusCode},
     response::IntoResponse,
     routing::{get, post},
     Json, Router,
@@ -80,8 +80,19 @@ async fn login(
     Ok((jar.add(cookie), Json(identity)))
 }
 
+async fn logout(jar: PrivateCookieJar) -> impl IntoResponse {
+    let mut cookie = Cookie::build(("email", ""))
+        .http_only(true)
+        .path("/")
+        .same_site(SameSite::None)
+        .build();
+    cookie.make_removal();
+    (jar.add(cookie), StatusCode::NO_CONTENT)
+}
+
 pub fn routes() -> Router<AppState> {
     Router::<AppState>::new()
         .route("/", get(get_identity))
         .route("/login", post(login))
+        .route("/logout", post(logout))
 }

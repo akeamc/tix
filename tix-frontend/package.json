@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.18",
     "@tanstack/query-sync-storage-persister": "^5.17.9",
     "@tanstack/react-query": "^5.17.9",
     "@tanstack/react-query-persist-client": "^5.17.9",

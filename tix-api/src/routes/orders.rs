@@ -5,6 +5,7 @@ use axum::response::IntoResponse;
 use axum::routing::{get, post};
 use axum::{Json, Router};
 use lettre::message::Mailbox;
+use rust_decimal::prelude::ToPrimitive;
 use serde::{Deserialize, Serialize};
 use sqlx::{postgres::PgQueryResult, types::Uuid};
 
@@ -107,7 +108,7 @@ async fn create_order(state: AppState, Json(req): Json<CreateOrder>) -> Result<i
 }
 
 async fn list_orders(state: AppState, _identity: Identity) -> Result<impl IntoResponse> {
-    let orders = sqlx::query_as!(Order, "SELECT * FROM orders")
+    let orders = sqlx::query_as!(Order, "SELECT * FROM orders ORDER BY created_at DESC")
         .fetch_all(&state.pool)
         .await?;
 
@@ -180,16 +181,43 @@ async fn get_tickets(order: Order, state: AppState) -> Result<impl IntoResponse>
     Ok(Json(tickets))
 }
 
-async fn swish(mut multipart: axum::extract::Multipart) -> Result<impl IntoResponse> {
+async fn swish(
+    state: AppState,
+    mut multipart: axum::extract::Multipart,
+) -> Result<impl IntoResponse> {
     let field = multipart.next_field().await.unwrap().unwrap();
     let data = field.bytes().await.unwrap();
-    let data = swish::csv::read_latin1(&data)
-        .unwrap()
-        .into_iter()
-        .map(Into::into)
-        .collect::<Vec<swish::Transaction>>();
+    let data = swish::parse_transactions(&data).unwrap();
 
-    Ok(Json(data))
+    let mut tx = state.pool.begin().await?;
+
+    // build an sql query that sets the paid_at field to the time of the transaction
+    // for each transaction in the data
+    // let mut query_builder = sqlx::QueryBuilder::new("UPDATE orders SET paid_at = $1 WHERE id = $2");
+    // query_builder.push_values(
+    //     data.iter(),
+    //     |mut b, transaction| {
+    //         b.push_bind(transaction.time).push_bind(transaction.message);
+    //     },
+    // );
+
+    for transaction in data.iter() {
+        let Some(amount) = transaction.amount.to_i32() else {
+            continue;
+        };
+        sqlx::query!(
+            "UPDATE orders SET paid_at = $1 WHERE id = $2 AND amount = $3",
+            transaction.time,
+            transaction.message,
+            amount,
+        )
+        .execute(&mut *tx)
+        .await?;
+    }
+
+    tx.commit().await?;
+
+    Ok(StatusCode::ACCEPTED)
 }
 
 pub fn routes() -> Router<AppState> {
