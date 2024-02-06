@@ -11,7 +11,7 @@ export interface SwishQrProps {
 function Field({ label, children }: PropsWithChildren<{ label: string }>) {
   return (
     <div>
-      <h2 className="font-medium text-gray-700 text-xs">{label}</h2>
+      <h2 className="text-xs font-medium text-gray-700">{label}</h2>
       {children}
     </div>
   );
@@ -44,26 +44,26 @@ export default function SwishQr({ payee, amount, message }: SwishQrProps) {
   };
 
   return (
-    <div className="flex max-sm:flex-col gap-4">
+    <div className="flex gap-4 max-sm:flex-col">
       <a
         href={`swish://payment?data=${encodeURIComponent(
           JSON.stringify(payment),
         )}`}
-        className="sm:hidden bg-black text-white shadow-sm p-4 rounded-lg text-lg font-medium text-center"
+        className="rounded-lg bg-black p-4 text-center text-lg font-medium text-white shadow-sm sm:hidden"
       >
         Öppna Swish
       </a>
-      <div className="border rounded-xl overflow-hidden bg-white aspect-square shadow-sm sm:basis-64 max-sm:hidden">
+      <div className="aspect-square overflow-hidden rounded-xl border bg-white shadow-sm max-sm:hidden sm:basis-64">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          className={classNames("aspect-square m-[8%] shrink-0")}
+          className={classNames("m-[8%] aspect-square shrink-0")}
           src={src}
           alt="Swish QR code"
         />
       </div>
       <section className="grow">
         <Field label="Mottagare">{formatPhone(payee)}</Field>
-        <hr className="border-gray-200 my-2" />
+        <hr className="my-2 border-gray-200" />
         <Field label="Belopp">
           {amount.toLocaleString("sv", {
             minimumFractionDigits: 2,
@@ -71,7 +71,7 @@ export default function SwishQr({ payee, amount, message }: SwishQrProps) {
           })}
           &nbsp;kr
         </Field>
-        <hr className="border-gray-200 my-2" />
+        <hr className="my-2 border-gray-200" />
         <Field label="Meddelande">{message}</Field>
       </section>
     </div>

@@ -30,11 +30,11 @@ export default function Checkout() {
   if (order?.completed_at) {
     return (
       <div className="text-center">
-        <CheckCircle className="mx-auto size-20 text-green-500 bg-green-100 p-4 rounded-xl mb-4" />
+        <CheckCircle className="mx-auto mb-4 size-20 rounded-xl bg-green-100 p-4 text-green-500" />
         <h1 className="text-4xl font-bold tracking-tight">
           Tack för ditt köp!
         </h1>
-        <p className="text-gray-700 mt-2 max-w-sm mx-auto">
+        <p className="mx-auto mt-2 max-w-sm text-gray-700">
           Biljetterna skickas till {order.email} när evenemanget närmar sig.
           Kontakta{" "}
           <a href="https://instagram.com/elevkaren" className="underline">
@@ -42,15 +42,15 @@ export default function Checkout() {
           </a>{" "}
           vid frågor.
         </p>
-        <p className="text-gray-700 text-xs mt-2">
+        <p className="mt-2 text-xs text-gray-700">
           Ordernummer:{" "}
-          <code className="px-[0.2em] py-[0.1em] bg-gray-200 rounded-sm text-black">
+          <code className="rounded-sm bg-gray-200 px-[0.2em] py-[0.1em] text-black">
             {order.id}
           </code>
         </p>
         <button
           onClick={() => setDetails(null)}
-          className="mt-4 underline text-gray-700 text-sm"
+          className="mt-4 text-sm text-gray-700 underline"
         >
           Köp fler biljetter
         </button>
@@ -64,7 +64,7 @@ export default function Checkout() {
         <h1 className="text-4xl font-bold tracking-tight">
           Betalning avbruten
         </h1>
-        <p className="text-gray-700 mt-2">Din beställning har avbrutits.</p>
+        <p className="mt-2 text-gray-700">Din beställning har avbrutits.</p>
       </div>
     );
   }

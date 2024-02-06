@@ -20,13 +20,13 @@ function Field({
 }) {
   return (
     <label className="block">
-      <p className="mb-1 font-medium text-sm">{label}</p>
+      <p className="mb-1 text-sm font-medium">{label}</p>
       <input
         {...props}
-        className="border-gray-200 border p-2 rounded-lg text-sm w-full"
+        className="w-full rounded-lg border border-gray-200 p-2 text-sm"
         required
       />
-      {note && <p className="text-gray-500 text-xs mt-1">{note}</p>}
+      {note && <p className="mt-1 text-xs text-gray-500">{note}</p>}
     </label>
   );
 }
@@ -43,14 +43,14 @@ function QuantityField({
   return (
     <div>
       <label className="block">
-        <p className="mb-1 font-medium text-sm">Antal biljetter</p>
+        <p className="mb-1 text-sm font-medium">Antal biljetter</p>
         <p className="flex items-center gap-2">
           <input
             type="number"
             name="count"
             value={value}
             onChange={(e) => onChange(parseInt(e.target.value))}
-            className="border-gray-200 border p-2 rounded-lg text-sm w-full"
+            className="w-full rounded-lg border border-gray-200 p-2 text-sm"
             min={1}
             max={10}
             required
@@ -58,7 +58,7 @@ function QuantityField({
           <span className="grow whitespace-nowrap">à {price}&nbsp;kr</span>
         </p>
       </label>
-      <p className="text-gray-500 text-xs mt-1">
+      <p className="mt-1 text-xs text-gray-500">
         I biljettpriset ingår garderob.
       </p>
     </div>
@@ -96,13 +96,13 @@ export default function OrderForm(props: { onCreate: (order: Order) => void }) {
   return (
     <form className="space-y-4" onSubmit={onSubmit}>
       <section>
-        <h1 className="text-4xl font-bold text-center tracking-tight mb-2">
+        <h1 className="mb-2 text-center text-4xl font-bold tracking-tight">
           STHLM VISION
         </h1>
         <p className="text-center text-gray-700">
           Fryshuset 10 februari kl. 18:30
         </p>
-        <p className="text-center mt-2 text-gray-700">
+        <p className="mt-2 text-center text-gray-700">
           {ticketsRemaining ?? "-"} biljetter kvar
         </p>
       </section>
@@ -128,11 +128,11 @@ export default function OrderForm(props: { onCreate: (order: Order) => void }) {
         placeholder="070-123 45 67"
       />
       {error && (
-        <p className="text-red-500 p-2 rounded-lg bg-red-50">{error}</p>
+        <p className="rounded-lg bg-red-50 p-2 text-red-500">{error}</p>
       )}
       <button
         disabled={creating || ticketsRemaining === 0}
-        className="bg-black text-white rounded-lg px-4 py-3 text-sm font-medium"
+        className="rounded-lg bg-black px-4 py-3 text-sm font-medium text-white"
       >
         Betala ({total}&nbsp;kr) -&gt;
       </button>

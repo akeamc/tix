@@ -9,7 +9,7 @@ const MeshGradientRenderer = dynamic(
     import("@johnn-e/react-mesh-gradient").then(
       (mod) => mod.MeshGradientRenderer,
     ),
-  { ssr: false, },
+  { ssr: false },
 );
 
 export default function Tickets({ order }: { order: Order | null }) {
@@ -23,12 +23,12 @@ export default function Tickets({ order }: { order: Order | null }) {
   if (!loaded) return null;
 
   return (
-    <div className="relative min-h-screen flex-col flex">
+    <div className="relative flex min-h-screen flex-col">
       <MeshGradientRenderer
         className="inset-0"
         colors={["#C41E3D", "#7D1128", "#FF2C55", "#3C0919", "#E2294F"]}
       />
-      <div className="z-20 grow snap-x snap-mandatory overflow-x-auto flex flex-nowrap items-center">
+      <div className="z-20 flex grow snap-x snap-mandatory flex-nowrap items-center overflow-x-auto">
         {data?.map(({ id }, i) => (
           <Ticket
             key={id}
@@ -39,7 +39,7 @@ export default function Tickets({ order }: { order: Order | null }) {
           />
         ))}
       </div>
-      <div className="text-white p-2 flex gap-2 items-center">
+      <div className="flex items-center gap-2 p-2 text-white">
         <AlertCircle className="size-6 shrink-0" />{" "}
         <p>Öka skärmljusstyrkan så att biljetten kan skannas.</p>
       </div>

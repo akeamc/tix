@@ -42,7 +42,7 @@ function Row({
   return (
     <tr
       className={classNames({
-        "text-yellow-500 bg-yellow-50": !order.paid_at && !order.canceled_at,
+        "bg-yellow-50 text-yellow-500": !order.paid_at && !order.canceled_at,
         "text-gray-400": order.canceled_at,
       })}
     >
@@ -87,13 +87,13 @@ function Toolbar() {
   const { isFetching, refetch, error } = useOrders();
 
   return (
-    <div className="py-2 flex gap-4 items-center">
+    <div className="flex items-center gap-4 py-2">
       <Button disabled={isFetching} onClick={() => refetch()}>
         <RefreshCw className={isFetching ? "animate-spin" : undefined} />
         Uppdatera
       </Button>
       {error && (
-        <div className="text-red-500 text-xs bg-red-50 rounded px-2 py-1">
+        <div className="rounded bg-red-50 px-2 py-1 text-xs text-red-500">
           {error.message}
         </div>
       )}
@@ -111,21 +111,21 @@ export default function Orders() {
     <div>
       <Toolbar />
       <div className="overflow-x-auto">
-        <table className="text-sm w-full">
+        <table className="w-full text-sm">
           <thead className="bg-gray-100 text-xs">
             <tr>
               <th />
-              <th className="text-left p-1 py-2 font-semibold">Ordernummer</th>
-              <th className="text-left p-1 py-2 font-semibold">Namn</th>
-              <th className="text-left p-1 py-2 font-semibold">E-postadress</th>
-              <th className="text-left p-1 py-2 font-semibold">
+              <th className="p-1 py-2 text-left font-semibold">Ordernummer</th>
+              <th className="p-1 py-2 text-left font-semibold">Namn</th>
+              <th className="p-1 py-2 text-left font-semibold">E-postadress</th>
+              <th className="p-1 py-2 text-left font-semibold">
                 Telefonnummer
               </th>
-              <th className="text-left p-1 py-2 font-semibold">Skapad</th>
-              <th className="text-left p-1 py-2 font-semibold">Betald</th>
-              <th className="text-left p-1 py-2 font-semibold">Avbruten</th>
-              <th className="text-left p-1 py-2 font-semibold">Biljetter</th>
-              <th className="text-left p-1 py-2 font-semibold">Pris</th>
+              <th className="p-1 py-2 text-left font-semibold">Skapad</th>
+              <th className="p-1 py-2 text-left font-semibold">Betald</th>
+              <th className="p-1 py-2 text-left font-semibold">Avbruten</th>
+              <th className="p-1 py-2 text-left font-semibold">Biljetter</th>
+              <th className="p-1 py-2 text-left font-semibold">Pris</th>
             </tr>
           </thead>
           <tbody>
@@ -146,7 +146,7 @@ export default function Orders() {
           </tbody>
         </table>
         {orders !== undefined && (
-          <div className="text-sm text-gray-700 mt-2">
+          <div className="mt-2 text-sm text-gray-700">
             {orders?.length} ordrar, {ticketStats?.paid} sålda biljetter
           </div>
         )}

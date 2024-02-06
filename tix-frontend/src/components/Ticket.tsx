@@ -13,16 +13,16 @@ export default function Ticket({
   total: number;
 }) {
   return (
-    <div className="snap-center shrink-0 w-screen sm:w-80 p-4 mx-auto">
-      <div className="flex flex-col bg-white p-4 rounded-xl shadow-md items-center">
-        <h1 className="text-xl font-medium text-center">{order.name}</h1>
+    <div className="mx-auto w-screen shrink-0 snap-center p-4 sm:w-80">
+      <div className="flex flex-col items-center rounded-xl bg-white p-4 shadow-md">
+        <h1 className="text-center text-xl font-medium">{order.name}</h1>
         <p>
           Biljett {index + 1}/{total}
         </p>
         <div className="w-full px-4">
-          <QRCode value={id} className="size-full my-4" />
+          <QRCode value={id} className="my-4 size-full" />
         </div>
-        <code className="text-xs text-center block font-medium">{id}</code>
+        <code className="block text-center text-xs font-medium">{id}</code>
       </div>
     </div>
   );

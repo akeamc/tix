@@ -3,16 +3,16 @@ import Link from "next/link";
 export default function Home() {
   return (
     <div className="bg-black text-white">
-      <main className="mx-auto max-w-screen-lg flex flex-col items-center justify-center min-h-screen p-4 text-center">
-        <h1 className="text-8xl md:text-9xl font-bold tracking-tight leading-none mb-6 md:mb-8">
+      <main className="mx-auto flex min-h-screen max-w-screen-lg flex-col items-center justify-center p-4 text-center">
+        <h1 className="mb-6 text-8xl font-bold leading-none tracking-tight md:mb-8 md:text-9xl">
           STHLM VISION 2024
         </h1>
-        <p className="text-lg text-gray-300 mb-6 md:mb-8">
+        <p className="mb-6 text-lg text-gray-300 md:mb-8">
           Fryshuset 10 februari
         </p>
         <Link
           href="/checkout"
-          className="bg-white px-6 py-3 md:px-8 md:py-4 inline-block rounded-lg text-black md:text-xl font-medium text-center hover:outline hover:outline-offset-2 hover:outline-white"
+          className="inline-block rounded-lg bg-white px-6 py-3 text-center font-medium text-black hover:outline hover:outline-offset-2 hover:outline-white md:px-8 md:py-4 md:text-xl"
         >
           Köp biljetter
         </Link>

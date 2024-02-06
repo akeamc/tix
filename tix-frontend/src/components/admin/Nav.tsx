@@ -19,7 +19,7 @@ export default function Nav() {
   }
 
   return (
-    <header className="border-b h-16 flex items-center px-4 justify-between">
+    <header className="flex h-16 items-center justify-between border-b px-4">
       <nav>
         <ul className="flex items-center gap-8 text-sm font-medium">
           <li>
@@ -31,7 +31,7 @@ export default function Nav() {
         </ul>
       </nav>
       {authenticated && (
-        <div className="flex gap-2 items-center">
+        <div className="flex items-center gap-2">
           <span className="text-xs font-medium">{identity?.email}</span>
           <Button onClick={onLogoutClick}>Logga ut</Button>
         </div>
@@ -52,7 +52,7 @@ export default function Nav() {
             </div>
           </div>
         </div>
-        <div className="bg-gray-50 px-4 py-3 flex justify-center sm:px-6">
+        <div className="flex justify-center bg-gray-50 px-4 py-3 sm:px-6">
           <GoogleLoginButton />
         </div>
       </Modal>

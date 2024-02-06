@@ -14,7 +14,7 @@ export default function Button({
     <button
       disabled={disabled}
       className={classNames(
-        "px-2 py-1 border font-medium rounded text-xs flex gap-2 items-center shadow-sm hover:bg-gray-100 active:shadow-none active:bg-gray-200 [&>svg]:size-4",
+        "flex items-center gap-2 rounded border px-2 py-1 text-xs font-medium shadow-sm hover:bg-gray-100 active:bg-gray-200 active:shadow-none [&>svg]:size-4",
         { "text-gray-500": disabled },
         className,
       )}

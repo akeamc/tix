@@ -45,19 +45,19 @@ export default function PaymentRequest({
           &nbsp;kr
         </span>
       </h1>
-      <p className="text-gray-700 mb-2">
+      <p className="mb-2 text-gray-700">
         Använd Swish för att slutföra köpet och tryck på &quot;Klar&quot; när du
         har betalat.
       </p>
       <SwishQr payee="123-345 69 51" amount={order.amount} message={order.id} />
       <button
-        className="w-full bg-green-500 hover:bg-green-600 active:bg-green-700 text-white text-lg py-4 rounded-lg font-medium mt-4 shadow"
+        className="mt-4 w-full rounded-lg bg-green-500 py-4 text-lg font-medium text-white shadow hover:bg-green-600 active:bg-green-700"
         onClick={onComplete}
       >
         Klar
       </button>
       <button
-        className="mx-auto text-sm mt-2 underline block hover:bg-gray-200 px-1 rounded transition-colors"
+        className="mx-auto mt-2 block rounded px-1 text-sm underline transition-colors hover:bg-gray-200"
         onClick={onCancel}
       >
         Avbryt köp
