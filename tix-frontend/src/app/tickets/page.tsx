@@ -6,8 +6,8 @@ import { useOrder } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function Page() {
-  const { data: order } = useOrder();
+const Page = () => {
+  const { data: order, isLoading } = useOrder();
   const router = useRouter();
   const [loaded, setLoaded] = useState(false);
   useEffect(() => {
@@ -16,19 +16,20 @@ export default function Page() {
 
   if (!loaded) return null;
 
-  if (order && !order.paid_at) {
-    router.push("/checkout");
-    return null;
-  }
+  // if (order && !order.paid_at) {
+  //   router.push("/checkout");
+  //   return null;
+  // }
 
-  if (!order) {
+  if (!order && !isLoading) {
     return <TicketRecovery />;
   }
 
   return (
     <main>
-      <h1>Tickets</h1>
-      <Tickets order={order} />
+      <Tickets order={order!} />
     </main>
   );
-}
+};
+
+export default Page;
