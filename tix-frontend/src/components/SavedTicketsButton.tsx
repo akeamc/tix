@@ -7,7 +7,7 @@ export default function SavedTicketsButton() {
   const { data: order } = useOrder();
   const { data: tickets } = useTickets(order?.id, order?.email);
 
-  if (!tickets) return null; // TODO
+  if (!tickets || !order?.paid_at) return null; // TODO
 
   return (
     <Link
