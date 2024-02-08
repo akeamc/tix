@@ -38,7 +38,7 @@ export default function TicketView({
           </code>
         </div>
         {scanned_at ? (
-          <p className="text-sm text-yellow-500">
+          <p className="text-sm font-medium text-yellow-500">
             Skannad{" "}
             <time dateTime={scanned_at}>
               {new Date(scanned_at).toLocaleString("sv", {
@@ -52,8 +52,10 @@ export default function TicketView({
             </span>
             )
           </p>
-        ) : (
+        ) : order.paid_at ? (
           <p className="text-sm">Giltig</p>
+        ) : (
+          <p className="text-sm font-medium text-red-500">Obetald</p>
         )}
       </div>
     </div>
