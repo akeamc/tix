@@ -5,6 +5,7 @@ export default function Home() {
   return (
     <div className="bg-black text-white">
       <main className="mx-auto flex min-h-screen max-w-screen-lg flex-col items-center justify-center p-4 text-center">
+        <div className="flex-1" />
         <h1 className="mb-6 text-8xl font-bold leading-none tracking-tight md:mb-8 md:text-9xl">
           STHLM VISION 2024
         </h1>
@@ -19,6 +20,14 @@ export default function Home() {
             Köp biljetter
           </Link>
           <SavedTicketsButton />
+        </div>
+        <div className="flex flex-1 items-end">
+          <Link
+            className="text-[#999] underline hover:text-white"
+            href="/admin"
+          >
+            Admin
+          </Link>
         </div>
         {/* <Link href="/tickets" className="text-gray-300 text-sm underline mt-4">
         Visa köpta biljetter

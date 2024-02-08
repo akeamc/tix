@@ -44,7 +44,7 @@ pub struct Scan {
     pub remaining_unscanned: usize,
 }
 
-async fn scan_ticket(state: AppState, Path(id): Path<Uuid>) -> Result<Json<Scan>> {
+async fn scan_ticket(state: AppState, Path(id): Path<Uuid>, _ident: Identity) -> Result<Json<Scan>> {
     let mut tx = state.pool.begin().await?;
 
     let tickets = sqlx::query_as!(

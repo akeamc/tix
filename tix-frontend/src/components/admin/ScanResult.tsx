@@ -106,34 +106,39 @@ export default function ScanResult({
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center">
-      <Icon invalid={invalid} alreadyScanned={data?.already_scanned ?? false} />
-      {data && (
-        <table className="w-full">
-          <tr className="border-b">
-            <td className="py-2 text-sm text-gray-500">Skannad</td>
-            <td className="w-full py-2 text-right font-medium">
-              <ScannedAt timestamp={data.ticket.scanned_at!} />
-            </td>
-          </tr>
-          <tr className="border-b">
-            <td className="py-2 text-sm text-gray-500">Namn</td>
-            <td className="py-2 text-right font-medium">{data.order.name}</td>
-          </tr>
-          <tr className="border-b">
-            <td className="py-2 text-sm text-gray-500">Ordernummer</td>
-            <td className="py-2 text-right font-medium">{data.order.id}</td>
-          </tr>
-          <tr className="border-b">
-            <td className="py-2 text-sm text-gray-500">
-              Återstående biljetter
-            </td>
-            <td className="py-2 text-right font-medium">
-              {data.remaining_unscanned}
-            </td>
-          </tr>
-        </table>
-      )}
-      <code className="mt-auto">{id}</code>
+      <div className="my-auto">
+        <Icon
+          invalid={invalid}
+          alreadyScanned={data?.already_scanned ?? false}
+        />
+        {data && (
+          <table className="w-full">
+            <tr className="border-b">
+              <td className="py-2 text-sm text-gray-500">Skannad</td>
+              <td className="w-full py-2 text-right font-medium">
+                <ScannedAt timestamp={data.ticket.scanned_at!} />
+              </td>
+            </tr>
+            <tr className="border-b">
+              <td className="py-2 text-sm text-gray-500">Namn</td>
+              <td className="py-2 text-right font-medium">{data.order.name}</td>
+            </tr>
+            <tr className="border-b">
+              <td className="py-2 text-sm text-gray-500">Ordernummer</td>
+              <td className="py-2 text-right font-medium">{data.order.id}</td>
+            </tr>
+            <tr className="border-b">
+              <td className="py-2 text-sm text-gray-500">
+                Återstående biljetter
+              </td>
+              <td className="py-2 text-right font-medium">
+                {data.remaining_unscanned}
+              </td>
+            </tr>
+          </table>
+        )}
+      </div>
+      <code className="text-sm text-gray-500">{id}</code>
     </div>
   );
 }
