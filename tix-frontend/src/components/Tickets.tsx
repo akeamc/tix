@@ -1,8 +1,9 @@
-import { Order, useTickets } from "@/lib/api";
+import { Order } from "@/lib/api";
 import { useEffect, useState } from "react";
 import Ticket from "./Ticket";
 import { AlertCircle } from "react-feather";
 import dynamic from "next/dynamic";
+import { useTickets } from "@/lib/hooks";
 
 const MeshGradientRenderer = dynamic(
   () =>

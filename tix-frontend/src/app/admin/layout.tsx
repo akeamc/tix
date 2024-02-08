@@ -6,10 +6,5 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <GSIProvider>
-      <Nav />
-      <main className="p-4">{children}</main>
-    </GSIProvider>
-  );
+  return <GSIProvider>{children}</GSIProvider>;
 }

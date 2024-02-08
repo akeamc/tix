@@ -1,35 +1,19 @@
-"use client";
+import OrderView from "@/components/OrderView";
+import { Order, getOrder } from "@/lib/api";
 
-import TicketRecovery from "@/components/TicketRecovery";
-import Tickets from "@/components/Tickets";
-import { useOrder } from "@/lib/api";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-
-const Page = () => {
-  const { data: order, isLoading } = useOrder();
-  const router = useRouter();
-  const [loaded, setLoaded] = useState(false);
-  useEffect(() => {
-    setLoaded(true);
-  }, []);
-
-  if (!loaded) return null;
-
-  // if (order && !order.paid_at) {
-  //   router.push("/checkout");
-  //   return null;
-  // }
-
-  if (!order && !isLoading) {
-    return <TicketRecovery />;
+export default async function Page({
+  searchParams: { email, id },
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
+  let order: Order | null = null;
+  if (id && email) {
+    order = await getOrder(id.toString(), email.toString());
   }
 
   return (
     <main>
-      <Tickets order={order!} />
+      <OrderView order={order ?? undefined} />
     </main>
   );
-};
-
-export default Page;
+}

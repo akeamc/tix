@@ -11,13 +11,14 @@ pub enum Code {
     OrderCompleted,
     InvalidIdToken,
     MissingCookie,
+    TicketNotFound,
 }
 
 impl Code {
     const fn status(&self) -> StatusCode {
         match self {
             Self::InternalError => StatusCode::INTERNAL_SERVER_ERROR,
-            Self::OrderNotFound => StatusCode::NOT_FOUND,
+            Self::OrderNotFound | Self::TicketNotFound => StatusCode::NOT_FOUND,
             Self::TooManyTickets | Self::OrderCompleted | Self::InvalidIdToken => {
                 StatusCode::BAD_REQUEST
             }

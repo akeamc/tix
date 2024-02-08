@@ -1,10 +1,11 @@
-import { uploadSwishReport, useOrders } from "@/lib/api";
+import { uploadSwishReport } from "@/lib/api";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import Button from "../Button";
 import { Upload } from "react-feather";
 import Modal from "../Modal";
 import { Dialog } from "@headlessui/react";
+import { useOrders } from "@/lib/hooks";
 
 export default function SwishImport() {
   const [file, setFile] = useState<File | null>(null);

@@ -1,6 +1,16 @@
-use axum::{response::IntoResponse, routing::get, Json, Router};
+use axum::{
+    extract::Path,
+    response::IntoResponse,
+    routing::{get, post},
+    Json, Router,
+};
+use uuid::Uuid;
 
-use crate::{error::Result, routes::orders::Ticket};
+use crate::{
+    error::{Code, ResponseError, Result},
+    order::Order,
+    routes::orders::Ticket,
+};
 
 use super::{auth::Identity, AppState};
 
@@ -24,6 +34,46 @@ async fn list_tickets(state: AppState) -> Result<impl IntoResponse> {
         .await?;
 
     Ok(Json(tickets))
+}
+
+#[derive(Debug, serde::Serialize)]
+pub struct Scan {
+    pub ticket: Ticket,
+    pub order: Order,
+    pub already_scanned: bool,
+}
+
+async fn scan_ticket(state: AppState, Path(id): Path<Uuid>) -> Result<Json<Scan>> {
+    let mut tx = state.pool.begin().await?;
+
+    let mut ticket = sqlx::query_as!(Ticket, "SELECT * FROM tickets WHERE id = $1", id)
+        .fetch_optional(&mut *tx)
+        .await?
+        .ok_or(ResponseError::new(Code::TicketNotFound, "ticket not found"))?;
+
+    let order = sqlx::query_as!(Order, "SELECT * FROM orders WHERE id = $1", ticket.order_id.as_ref())
+        .fetch_one(&mut *tx)
+        .await?;
+
+    let already_scanned = ticket.scanned_at.is_some();
+
+    if !already_scanned {
+        ticket = sqlx::query_as!(
+            Ticket,
+            "UPDATE tickets SET scanned_at = NOW() WHERE id = $1 RETURNING *",
+            id
+        )
+        .fetch_one(&mut *tx)
+        .await?;
+    }
+
+    tx.commit().await?;
+
+    Ok(Json(Scan {
+        ticket,
+        order,
+        already_scanned,
+    }))
 }
 
 async fn get_tickets_remaining(state: AppState) -> Result<impl IntoResponse> {
@@ -53,4 +103,5 @@ pub fn routes() -> Router<AppState> {
         .route("/", get(list_tickets))
         .route("/remaining", get(get_tickets_remaining))
         .route("/stats", get(get_ticket_stats))
+        .route("/:id/scan", post(scan_ticket))
 }

@@ -12,6 +12,11 @@
         "ordinal": 1,
         "name": "order_id",
         "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "scanned_at",
+        "type_info": "Timestamptz"
       }
     ],
     "parameters": {
@@ -19,7 +24,8 @@
     },
     "nullable": [
       false,
-      false
+      false,
+      true
     ]
   },
   "hash": "1cde3c03cd3dcbabf88853a96d2087f2ca9d3b238c492029ef7df45e3715b6d3"

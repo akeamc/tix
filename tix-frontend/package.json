@@ -17,6 +17,7 @@
     "@vercel/analytics": "^1.1.1",
     "libphonenumber-js": "^1.10.53",
     "next": "14.0.4",
+    "qr-scanner": "^1.4.2",
     "react": "^18",
     "react-dom": "^18",
     "react-feather": "^2.0.10",

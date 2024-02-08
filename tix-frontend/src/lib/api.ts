@@ -1,7 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
-import { useOrderStore } from "./state";
-import { useEffect } from "react";
-
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export interface CreateOrder {
@@ -74,6 +70,7 @@ export async function completeOrder(id: string, email: string): Promise<Order> {
 interface Ticket {
   id: string;
   order_id: string;
+  scanned_at?: string;
 }
 
 export async function getTickets(
@@ -88,6 +85,43 @@ export async function getTickets(
 
   if (!res.ok) {
     throw new Error("Failed to get tickets");
+  }
+
+  return res.json();
+}
+
+export async function getTicket(id: string): Promise<Ticket | null> {
+  const res = await request(`/tickets/${encodeURIComponent(id)}`);
+
+  if (res.status === 404) {
+    return null;
+  }
+
+  if (!res.ok) {
+    throw new Error("Failed to get ticket");
+  }
+
+  return res.json();
+}
+
+interface Scan {
+  ticket: Ticket;
+  order: Order;
+  already_scanned: boolean;
+}
+
+export async function scanTicket(id: string): Promise<Scan | null> {
+  const res = await request(`/tickets/${encodeURIComponent(id)}/scan`, {
+    method: "POST",
+  });
+
+  let alreadyScanned = false;
+
+  if (res.status === 404 || res.status === 400) {
+    // Ticket not found
+    return null;
+  } else if (!res.ok) {
+    throw new Error("Failed to scan ticket");
   }
 
   return res.json();
@@ -110,14 +144,6 @@ export async function getOrder(
   return res.json();
 }
 
-export function useTickets(id?: string, email?: string) {
-  return useQuery({
-    queryKey: ["orders", id, "tickets"],
-    enabled: !!id,
-    queryFn: () => getTickets(id!, email!),
-  });
-}
-
 export async function getTicketsRemaining(): Promise<number> {
   const res = await request("/tickets/remaining");
 
@@ -126,25 +152,6 @@ export async function getTicketsRemaining(): Promise<number> {
   }
 
   return res.json();
-}
-
-export function useOrder() {
-  const { details, setDetails } = useOrderStore();
-
-  const q = useQuery({
-    queryKey: ["orders", details?.id],
-    enabled: !!details,
-    queryFn: () => getOrder(details!.id, details!.email),
-  });
-
-  useEffect(() => {
-    // order was deleted
-    if (q.data === null) {
-      setDetails(null);
-    }
-  }, [q.data, setDetails]);
-
-  return q;
 }
 
 export interface LoginRequest {
@@ -212,13 +219,6 @@ export async function getOrders(): Promise<Order[]> {
   return res.json();
 }
 
-export const useOrders = () =>
-  useQuery({
-    queryKey: ["orders"],
-    queryFn: getOrders,
-    refetchInterval: 10000,
-  });
-
 export interface TicketStats {
   paid: number;
 }
@@ -232,13 +232,6 @@ export async function getTicketStats(): Promise<TicketStats> {
 
   return res.json();
 }
-
-export const useTicketStats = () =>
-  useQuery({
-    queryKey: ["ticketStats"],
-    queryFn: getTicketStats,
-    refetchInterval: 10000,
-  });
 
 export async function uploadSwishReport(file: File): Promise<void> {
   const formData = new FormData();

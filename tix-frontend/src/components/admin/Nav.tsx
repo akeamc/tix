@@ -7,8 +7,15 @@ import { logout } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import Modal from "../Modal";
 import { Dialog } from "@headlessui/react";
+import classNames from "classnames";
 
-export default function Nav() {
+export default function Nav({
+  transparent = false,
+  className,
+}: {
+  transparent?: boolean;
+  className?: string;
+}) {
   const { identity, authenticated, unauthenticated } = useAuth();
   const router = useRouter();
 
@@ -19,11 +26,17 @@ export default function Nav() {
   }
 
   return (
-    <header className="flex h-16 items-center justify-between border-b px-4">
+    <header
+      className={classNames(
+        "flex h-16 items-center justify-between px-4",
+        transparent ? "bg-[#ffffffcc] backdrop-blur" : "border-b",
+        className,
+      )}
+    >
       <nav>
         <ul className="flex items-center gap-8 text-sm font-medium">
           <li>
-            <Link href="/admin">Start</Link>
+            <Link href="/admin">Skanna</Link>
           </li>
           <li>
             <Link href="/admin/orders">Ordrar</Link>
@@ -31,7 +44,7 @@ export default function Nav() {
         </ul>
       </nav>
       {authenticated && (
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
           <span className="text-xs font-medium">{identity?.email}</span>
           <Button onClick={onLogoutClick}>Logga ut</Button>
         </div>

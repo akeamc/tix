@@ -8,6 +8,7 @@ use lettre::message::Mailbox;
 use rust_decimal::prelude::ToPrimitive;
 use serde::{Deserialize, Serialize};
 use sqlx::{postgres::PgQueryResult, types::Uuid};
+use time::OffsetDateTime;
 
 use crate::email::send_order_confirmation;
 use crate::error::{Code, ResponseError, Result};
@@ -22,6 +23,8 @@ use super::AppState;
 pub struct Ticket {
     pub id: Uuid,
     pub order_id: OrderId,
+    #[serde(with = "time::serde::rfc3339::option")]
+    pub scanned_at: Option<OffsetDateTime>,
 }
 
 #[derive(Debug, Deserialize)]
