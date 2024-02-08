@@ -1,6 +1,5 @@
 import { Order } from "@/lib/api";
-import { useEffect, useState } from "react";
-import Ticket from "./Ticket";
+import TicketView from "./TicketView";
 import { AlertCircle } from "react-feather";
 import dynamic from "next/dynamic";
 import { useTickets } from "@/lib/hooks";
@@ -14,26 +13,38 @@ const MeshGradientRenderer = dynamic(
 );
 
 export default function Tickets({ order }: { order: Order | null }) {
-  const [loaded, setLoaded] = useState(false);
   const { data } = useTickets(order?.id, order?.email);
-
-  useEffect(() => {
-    setLoaded(true);
-  }, []);
-
-  if (!loaded) return null;
 
   return (
     <div className="relative flex min-h-screen flex-col">
       <MeshGradientRenderer
         className="inset-0"
-        colors={["#C41E3D", "#7D1128", "#FF2C55", "#3C0919", "#E2294F"]}
+        colors={["#31029c", "#c90099", "#bffffd", "#22016d", "#d3c0ff"]}
+        speed={0.01}
       />
+      <svg>
+        <defs>
+          <filter id="goo">
+            <feGaussianBlur
+              in="SourceGraphic"
+              stdDeviation="10"
+              result="blur"
+            />
+            <feColorMatrix
+              in="blur"
+              mode="matrix"
+              values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 20 -10"
+              result="goo"
+            />
+            <feBlend in2="goo" in="SourceGraphic" result="mix" />
+          </filter>
+        </defs>
+      </svg>
       <div className="z-20 flex grow snap-x snap-mandatory flex-nowrap items-center overflow-x-auto">
-        {data?.map(({ id }, i) => (
-          <Ticket
-            key={id}
-            id={id}
+        {data?.map((ticket, i) => (
+          <TicketView
+            key={ticket.id}
+            ticket={ticket}
             order={order!}
             index={i}
             total={data.length}

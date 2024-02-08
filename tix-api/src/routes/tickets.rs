@@ -51,11 +51,15 @@ async fn scan_ticket(state: AppState, Path(id): Path<Uuid>) -> Result<Json<Scan>
         .await?
         .ok_or(ResponseError::new(Code::TicketNotFound, "ticket not found"))?;
 
+    let already_scanned = ticket.scanned_at.is_some();
+
     let order = sqlx::query_as!(Order, "SELECT * FROM orders WHERE id = $1", ticket.order_id.as_ref())
         .fetch_one(&mut *tx)
         .await?;
 
-    let already_scanned = ticket.scanned_at.is_some();
+    if order.paid_at.is_none() {
+        return Err(ResponseError::new(Code::TicketNotFound, "order not paid"));
+    }
 
     if !already_scanned {
         ticket = sqlx::query_as!(

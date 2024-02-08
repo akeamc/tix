@@ -67,7 +67,7 @@ export async function completeOrder(id: string, email: string): Promise<Order> {
   return res.json();
 }
 
-interface Ticket {
+export interface Ticket {
   id: string;
   order_id: string;
   scanned_at?: string;

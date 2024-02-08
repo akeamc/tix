@@ -1,4 +1,3 @@
-import Nav from "@/components/admin/Nav";
 import { GSIProvider } from "@/components/auth";
 
 export default function RootLayout({
