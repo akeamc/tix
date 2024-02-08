@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::{convert::TryInto, num::NonZeroUsize};
 
 use axum::http::StatusCode;
@@ -110,11 +111,70 @@ async fn create_order(state: AppState, Json(req): Json<CreateOrder>) -> Result<i
     Ok((StatusCode::CREATED, Json(order)))
 }
 
-async fn list_orders(state: AppState, _identity: Identity) -> Result<impl IntoResponse> {
-    let orders = sqlx::query_as!(Order, "SELECT * FROM orders ORDER BY created_at DESC")
-        .fetch_all(&state.pool)
-        .await?;
+#[derive(Debug, Serialize)]
+struct DetailedOrder {
+    #[serde(flatten)]
+    order: Order,
+    tickets: Vec<Ticket>,
+}
 
+async fn list_orders(state: AppState, _identity: Identity) -> Result<Json<Vec<DetailedOrder>>> {
+    let records = sqlx::query!(
+        "SELECT
+    o.id as order_id,
+    o.email as email,
+    o.name as name,
+    o.phone as phone,
+    o.amount as amount,
+    o.created_at as created_at,
+    o.paid_at as paid_at,
+    o.completed_at as completed_at,
+    o.canceled_at as canceled_at,
+    t.id as ticket_id,
+    t.scanned_at as scanned_at
+  FROM
+    orders o
+    JOIN tickets t ON o.id = t.order_id
+    "
+    )
+    .fetch_all(&state.pool)
+    .await?;
+
+    let mut orders = HashMap::new();
+
+    for record in records {
+        let order_id: OrderId = record.order_id.into();
+        let ticket_id = record.ticket_id;
+
+        let order = orders
+            .entry(order_id.clone())
+            .or_insert_with(|| DetailedOrder {
+                order: Order {
+                    id: order_id.clone(),
+                    email: record.email,
+                    name: record.name,
+                    phone: record.phone,
+                    amount: record.amount,
+                    created_at: record.created_at,
+                    paid_at: record.paid_at,
+                    completed_at: record.completed_at,
+                    canceled_at: record.canceled_at,
+                },
+                tickets: Vec::new(),
+            });
+
+        order.tickets.push(Ticket {
+            id: ticket_id,
+            order_id,
+            scanned_at: record.scanned_at,
+        });
+    }
+
+    let mut orders = orders.into_values().collect::<Vec<_>>();
+    orders.sort_by_key(|order| std::cmp::Reverse(order.order.created_at));
+    for order in &mut orders {
+        order.tickets.sort_by_key(|ticket| ticket.id);
+    }
     Ok(Json(orders))
 }
 

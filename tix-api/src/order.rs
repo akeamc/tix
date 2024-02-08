@@ -21,7 +21,7 @@ fn unambiguous_str(len: usize) -> String {
         .collect()
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, sqlx::Type)]
+#[derive(Debug, Serialize, Deserialize, Clone, sqlx::Type, PartialEq, Eq, Hash)]
 #[sqlx(transparent)]
 pub struct OrderId(String);
 

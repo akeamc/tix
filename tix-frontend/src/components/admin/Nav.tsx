@@ -39,7 +39,7 @@ export default function Nav({
             <Link href="/admin">Skanna</Link>
           </li>
           <li>
-            <Link href="/admin/orders">Ordrar</Link>
+            <Link href="/admin/tickets">Biljetter</Link>
           </li>
         </ul>
       </nav>

@@ -22,24 +22,6 @@ export default function Tickets({ order }: { order: Order | null }) {
         colors={["#31029c", "#c90099", "#bffffd", "#22016d", "#d3c0ff"]}
         speed={0.01}
       />
-      <svg>
-        <defs>
-          <filter id="goo">
-            <feGaussianBlur
-              in="SourceGraphic"
-              stdDeviation="10"
-              result="blur"
-            />
-            <feColorMatrix
-              in="blur"
-              mode="matrix"
-              values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 20 -10"
-              result="goo"
-            />
-            <feBlend in2="goo" in="SourceGraphic" result="mix" />
-          </filter>
-        </defs>
-      </svg>
       <div className="z-20 flex grow snap-x snap-mandatory flex-nowrap items-center overflow-x-auto">
         {data?.map((ticket, i) => (
           <TicketView

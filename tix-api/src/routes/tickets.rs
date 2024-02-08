@@ -29,7 +29,7 @@ pub async fn tickets_remaining(executor: impl sqlx::PgExecutor<'_>) -> sqlx::Res
 }
 
 async fn list_tickets(state: AppState) -> Result<impl IntoResponse> {
-    let tickets = sqlx::query_as!(Ticket, "SELECT * FROM tickets")
+    let tickets = sqlx::query_as!(Ticket, "SELECT * FROM tickets ORDER BY id ASC")
         .fetch_all(&state.pool)
         .await?;
 
@@ -41,21 +41,39 @@ pub struct Scan {
     pub ticket: Ticket,
     pub order: Order,
     pub already_scanned: bool,
+    pub remaining_unscanned: usize,
 }
 
 async fn scan_ticket(state: AppState, Path(id): Path<Uuid>) -> Result<Json<Scan>> {
     let mut tx = state.pool.begin().await?;
 
-    let mut ticket = sqlx::query_as!(Ticket, "SELECT * FROM tickets WHERE id = $1", id)
-        .fetch_optional(&mut *tx)
-        .await?
-        .ok_or(ResponseError::new(Code::TicketNotFound, "ticket not found"))?;
+    let tickets = sqlx::query_as!(
+        Ticket,
+        "SELECT *
+    FROM tickets
+    WHERE order_id = (SELECT order_id FROM tickets WHERE id = $1)",
+        id
+    )
+    .fetch_all(&mut *tx)
+    .await?;
 
+    let remaining_unscanned = tickets
+        .iter()
+        .filter(|t| t.scanned_at.is_none() && t.id != id)
+        .count();
+    let mut ticket = tickets
+        .into_iter()
+        .find(|t| t.id == id)
+        .ok_or_else(|| ResponseError::new(Code::TicketNotFound, "ticket not found"))?;
     let already_scanned = ticket.scanned_at.is_some();
 
-    let order = sqlx::query_as!(Order, "SELECT * FROM orders WHERE id = $1", ticket.order_id.as_ref())
-        .fetch_one(&mut *tx)
-        .await?;
+    let order = sqlx::query_as!(
+        Order,
+        "SELECT * FROM orders WHERE id = $1",
+        ticket.order_id.as_ref()
+    )
+    .fetch_one(&mut *tx)
+    .await?;
 
     if order.paid_at.is_none() {
         return Err(ResponseError::new(Code::TicketNotFound, "order not paid"));
@@ -77,6 +95,7 @@ async fn scan_ticket(state: AppState, Path(id): Path<Uuid>) -> Result<Json<Scan>
         ticket,
         order,
         already_scanned,
+        remaining_unscanned,
     }))
 }
 

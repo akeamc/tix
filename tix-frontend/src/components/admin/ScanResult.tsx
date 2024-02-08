@@ -2,6 +2,7 @@ import { scanTicket } from "@/lib/api";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { AlertTriangle, Check, X } from "react-feather";
+import TimeSince from "../TimeSince";
 
 function Icon({
   invalid,
@@ -11,24 +12,27 @@ function Icon({
   alreadyScanned: boolean;
 }) {
   let IconComponent = X;
-  let text = "Ogiltig biljett";
-  let color = "red";
+  let text = "Ogiltig";
+  let color = "text-red-500";
+  let background = "bg-red-50";
 
   if (!invalid) {
     IconComponent = Check;
-    text = "Giltig biljett";
-    color = "green";
+    text = "Giltig";
+    color = "text-green-500";
+    background = "bg-green-50";
   }
 
   if (alreadyScanned) {
     IconComponent = AlertTriangle;
     text = "Redan skannad";
-    color = "yellow";
+    color = "text-yellow-500";
+    background = "bg-yellow-50";
   }
 
   return (
-    <div className={`text-${color}-500 text-center`}>
-      <div className={`bg-${color}-50 size-40 rounded-full p-8`}>
+    <div className={`${color} text-center`}>
+      <div className={`${background} size-40 rounded-full p-8`}>
         <IconComponent className="size-full" />
       </div>
       <p className="my-4 text-lg font-medium">{text}</p>
@@ -38,22 +42,6 @@ function Icon({
 
 function ScannedAt(props: { timestamp: string }) {
   const timestamp = new Date(props.timestamp);
-  const [now, setNow] = useState<Date | undefined>();
-
-  useEffect(() => {
-    setNow(new Date());
-
-    const i = setInterval(() => setNow(new Date()), 1000);
-
-    return () => clearInterval(i);
-  }, []);
-
-  if (!now) return null;
-
-  const delta = Math.floor((now.getTime() - timestamp.getTime()) / 1000);
-  const second = (delta % 60).toString().padStart(2, "0");
-  const minute = (Math.floor(delta / 60) % 60).toString().padStart(2, "0");
-  const hours = Math.floor(delta / 3600);
 
   return (
     <div className="flex flex-col">
@@ -62,7 +50,7 @@ function ScannedAt(props: { timestamp: string }) {
         minute: "numeric",
       })}
       <span className="text-xs font-medium tabular-nums text-gray-500">
-        {hours}:{minute}:{second} sedan
+        <TimeSince timestamp={props.timestamp} /> sedan
       </span>
     </div>
   );
@@ -75,7 +63,7 @@ export default function ScanResult({
   id?: string;
   dismiss: () => void;
 }) {
-  const { data, mutate, isPending, isSuccess, isError } = useMutation({
+  const { data, mutate, isSuccess, isError } = useMutation({
     mutationKey: ["tickets", id, "scan"],
     mutationFn: () => scanTicket(id!),
     retry: 1, // retry once
@@ -117,11 +105,10 @@ export default function ScanResult({
   }
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-1 flex-col items-center justify-center">
       <Icon invalid={invalid} alreadyScanned={data?.already_scanned ?? false} />
       {data && (
         <table className="w-full">
-          {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
           <tr className="border-b">
             <td className="py-2 text-sm text-gray-500">Skannad</td>
             <td className="w-full py-2 text-right font-medium">
@@ -135,6 +122,14 @@ export default function ScanResult({
           <tr className="border-b">
             <td className="py-2 text-sm text-gray-500">Ordernummer</td>
             <td className="py-2 text-right font-medium">{data.order.id}</td>
+          </tr>
+          <tr className="border-b">
+            <td className="py-2 text-sm text-gray-500">
+              Återstående biljetter
+            </td>
+            <td className="py-2 text-right font-medium">
+              {data.remaining_unscanned}
+            </td>
           </tr>
         </table>
       )}

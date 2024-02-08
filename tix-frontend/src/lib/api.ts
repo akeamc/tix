@@ -108,14 +108,13 @@ interface Scan {
   ticket: Ticket;
   order: Order;
   already_scanned: boolean;
+  remaining_unscanned: number;
 }
 
 export async function scanTicket(id: string): Promise<Scan | null> {
   const res = await request(`/tickets/${encodeURIComponent(id)}/scan`, {
     method: "POST",
   });
-
-  let alreadyScanned = false;
 
   if (res.status === 404 || res.status === 400) {
     // Ticket not found
@@ -209,7 +208,11 @@ export async function request(
   });
 }
 
-export async function getOrders(): Promise<Order[]> {
+interface DetailedOrder extends Order {
+  tickets: Ticket[];
+}
+
+export async function getOrders(): Promise<DetailedOrder[]> {
   const res = await request("/orders");
 
   if (!res.ok) {

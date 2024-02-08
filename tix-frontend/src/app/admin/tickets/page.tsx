@@ -6,7 +6,7 @@ export default function OrdersPage() {
     <>
       <Nav />
       <main>
-        <Orders />;
+        <Orders />
       </main>
     </>
   );

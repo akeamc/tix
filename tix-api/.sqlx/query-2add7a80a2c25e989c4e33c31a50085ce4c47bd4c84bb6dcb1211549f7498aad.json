@@ -1,11 +1,11 @@
 {
   "db_name": "PostgreSQL",
-  "query": "SELECT * FROM orders ORDER BY created_at DESC",
+  "query": "SELECT\n    o.id as order_id,\n    o.email as email,\n    o.name as name,\n    o.phone as phone,\n    o.amount as amount,\n    o.created_at as created_at,\n    o.paid_at as paid_at,\n    o.completed_at as completed_at,\n    o.canceled_at as canceled_at,\n    t.id as ticket_id,\n    t.scanned_at as scanned_at\n  FROM\n    orders o\n    JOIN tickets t ON o.id = t.order_id\n    ",
   "describe": {
     "columns": [
       {
         "ordinal": 0,
-        "name": "id",
+        "name": "order_id",
         "type_info": "Text"
       },
       {
@@ -47,6 +47,16 @@
         "ordinal": 8,
         "name": "canceled_at",
         "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 9,
+        "name": "ticket_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 10,
+        "name": "scanned_at",
+        "type_info": "Timestamptz"
       }
     ],
     "parameters": {
@@ -61,8 +71,10 @@
       false,
       true,
       true,
+      true,
+      false,
       true
     ]
   },
-  "hash": "5a0198b2f168f016e56c46eb4d17292f780f1d519627cb4f7b56ad268353c575"
+  "hash": "2add7a80a2c25e989c4e33c31a50085ce4c47bd4c84bb6dcb1211549f7498aad"
 }

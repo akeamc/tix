@@ -11,7 +11,7 @@ export default function SwishImport() {
   const [file, setFile] = useState<File | null>(null);
   const { refetch } = useOrders();
   const [open, setOpen] = useState(false);
-  const { data, mutate } = useMutation({
+  const { mutate } = useMutation({
     mutationKey: ["swishImport"],
     mutationFn: async () => {
       if (!file) {

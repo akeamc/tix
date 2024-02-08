@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "SELECT * FROM tickets",
+  "query": "SELECT * FROM tickets ORDER BY id ASC",
   "describe": {
     "columns": [
       {
@@ -28,5 +28,5 @@
       true
     ]
   },
-  "hash": "1cde3c03cd3dcbabf88853a96d2087f2ca9d3b238c492029ef7df45e3715b6d3"
+  "hash": "d27aa38ab0f9e14b7e4238f612f8081c1c7f2d4e76cf896a07f41bd45eb98be0"
 }

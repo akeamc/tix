@@ -1,5 +1,6 @@
 import { Order, Ticket } from "@/lib/api";
 import QRCode from "react-qr-code";
+import TimeSince from "./TimeSince";
 
 export default function TicketView({
   ticket,
@@ -24,7 +25,7 @@ export default function TicketView({
         <div className="relative my-4 w-full px-4">
           <QRCode value={id} className="my-4 size-full" />
           <code
-            className="absolute -right-4 bottom-0 top-0 flex w-8 items-center justify-center text-center text-xs"
+            className="absolute -right-4 bottom-0 top-0 flex w-8 items-center justify-center text-nowrap text-center text-xs"
             style={{ writingMode: "vertical-rl" }}
           >
             {id}
@@ -36,21 +37,24 @@ export default function TicketView({
             {order.id}
           </code>
         </div>
-        <p className="text-sm">
-          {scanned_at ? (
-            <>
-              Skannad{" "}
-              <time dateTime={scanned_at}>
-                {new Date(scanned_at).toLocaleString("sv", {
-                  hour: "numeric",
-                  minute: "numeric",
-                })}
-              </time>
-            </>
-          ) : (
-            "Giltig"
-          )}
-        </p>
+        {scanned_at ? (
+          <p className="text-sm text-yellow-500">
+            Skannad{" "}
+            <time dateTime={scanned_at}>
+              {new Date(scanned_at).toLocaleString("sv", {
+                hour: "numeric",
+                minute: "numeric",
+              })}
+            </time>{" "}
+            (+
+            <span className="tabular-nums">
+              <TimeSince timestamp={scanned_at} />
+            </span>
+            )
+          </p>
+        ) : (
+          <p className="text-sm">Giltig</p>
+        )}
       </div>
     </div>
   );
