@@ -47,6 +47,11 @@
         "ordinal": 8,
         "name": "canceled_at",
         "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 9,
+        "name": "emailed_at",
+        "type_info": "Timestamptz"
       }
     ],
     "parameters": {
@@ -65,6 +70,7 @@
       false,
       false,
       false,
+      true,
       true,
       true,
       true

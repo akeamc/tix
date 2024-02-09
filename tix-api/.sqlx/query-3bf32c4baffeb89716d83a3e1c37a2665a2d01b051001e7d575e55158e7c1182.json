@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "SELECT * FROM orders WHERE id = $1",
+  "query": "SELECT * FROM orders WHERE emailed_at IS NULL AND paid_at IS NOT NULL ORDER BY random() LIMIT 1",
   "describe": {
     "columns": [
       {
@@ -55,9 +55,7 @@
       }
     ],
     "parameters": {
-      "Left": [
-        "Text"
-      ]
+      "Left": []
     },
     "nullable": [
       false,
@@ -72,5 +70,5 @@
       true
     ]
   },
-  "hash": "5e7c27f190a78651814eb730d006cf4f529066e3fdcd148469bd7d31a86f21ec"
+  "hash": "3bf32c4baffeb89716d83a3e1c37a2665a2d01b051001e7d575e55158e7c1182"
 }

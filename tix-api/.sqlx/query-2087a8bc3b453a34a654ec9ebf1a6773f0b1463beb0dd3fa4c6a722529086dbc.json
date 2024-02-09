@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "SELECT\n    o.id as order_id,\n    o.email as email,\n    o.name as name,\n    o.phone as phone,\n    o.amount as amount,\n    o.created_at as created_at,\n    o.paid_at as paid_at,\n    o.completed_at as completed_at,\n    o.canceled_at as canceled_at,\n    t.id as ticket_id,\n    t.scanned_at as scanned_at\n  FROM\n    orders o\n    JOIN tickets t ON o.id = t.order_id\n    ",
+  "query": "SELECT\n    o.id as order_id,\n    o.email as email,\n    o.name as name,\n    o.phone as phone,\n    o.amount as amount,\n    o.created_at as created_at,\n    o.paid_at as paid_at,\n    o.completed_at as completed_at,\n    o.canceled_at as canceled_at,\n    o.emailed_at as emailed_at,\n    t.id as ticket_id,\n    t.scanned_at as scanned_at\n  FROM\n    orders o\n    JOIN tickets t ON o.id = t.order_id\n    ",
   "describe": {
     "columns": [
       {
@@ -50,11 +50,16 @@
       },
       {
         "ordinal": 9,
+        "name": "emailed_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 10,
         "name": "ticket_id",
         "type_info": "Uuid"
       },
       {
-        "ordinal": 10,
+        "ordinal": 11,
         "name": "scanned_at",
         "type_info": "Timestamptz"
       }
@@ -72,9 +77,10 @@
       true,
       true,
       true,
+      true,
       false,
       true
     ]
   },
-  "hash": "2add7a80a2c25e989c4e33c31a50085ce4c47bd4c84bb6dcb1211549f7498aad"
+  "hash": "2087a8bc3b453a34a654ec9ebf1a6773f0b1463beb0dd3fa4c6a722529086dbc"
 }
