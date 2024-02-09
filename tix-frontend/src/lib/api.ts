@@ -17,6 +17,7 @@ export interface Order {
   paid_at: string | null;
   completed_at: string | null;
   canceled_at: string | null;
+  emailed_at: string | null;
 }
 
 export async function createOrder(req: CreateOrder): Promise<Order> {
@@ -248,4 +249,16 @@ export async function uploadSwishReport(file: File): Promise<void> {
   if (!res.ok) {
     throw new Error("Failed to upload swish report");
   }
+}
+
+export async function sendEmail(): Promise<number> {
+  const res = await request("/orders/email", {
+    method: "POST",
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to send emails");
+  }
+
+  return res.json();
 }

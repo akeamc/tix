@@ -8,10 +8,11 @@ use axum::{Json, Router};
 use lettre::message::Mailbox;
 use rust_decimal::prelude::ToPrimitive;
 use serde::{Deserialize, Serialize};
+use sqlx::PgExecutor;
 use sqlx::{postgres::PgQueryResult, types::Uuid};
 use time::OffsetDateTime;
 
-use crate::email::send_order_confirmation;
+use crate::email::{send_order_confirmation, send_tickets};
 use crate::error::{Code, ResponseError, Result};
 use crate::order::{Order, OrderId};
 use crate::swish;
@@ -130,6 +131,7 @@ async fn list_orders(state: AppState, _identity: Identity) -> Result<Json<Vec<De
     o.paid_at as paid_at,
     o.completed_at as completed_at,
     o.canceled_at as canceled_at,
+    o.emailed_at as emailed_at,
     t.id as ticket_id,
     t.scanned_at as scanned_at
   FROM
@@ -159,6 +161,7 @@ async fn list_orders(state: AppState, _identity: Identity) -> Result<Json<Vec<De
                     paid_at: record.paid_at,
                     completed_at: record.completed_at,
                     canceled_at: record.canceled_at,
+                    emailed_at: record.emailed_at,
                 },
                 tickets: Vec::new(),
             });
@@ -283,10 +286,46 @@ async fn swish(
     Ok(StatusCode::ACCEPTED)
 }
 
+async fn order_to_email(executor: impl PgExecutor<'_>) -> Result<Option<Order>> {
+    Ok(sqlx::query_as!(
+        Order,
+        "SELECT * FROM orders WHERE emailed_at IS NULL AND paid_at IS NOT NULL ORDER BY random() LIMIT 1"
+    )
+    .fetch_optional(executor)
+    .await?)
+}
+
+async fn email_tickets(state: AppState, _identity: Identity) -> Result<impl IntoResponse> {
+    let mut tx = state.pool.begin().await?;
+    let mut count = 0;
+
+    while let Some(order) = order_to_email(&mut *tx).await? {
+        let mbox = Mailbox::new(Some(order.name.clone()), order.email.parse().unwrap());
+        if let Err(err) = send_tickets(&state.smtp, mbox, &order).await {
+            tracing::error!("failed to send tickets to {}: {}", order.email, err);
+            break;
+        }
+        sqlx::query!(
+            "UPDATE orders SET emailed_at = NOW() WHERE id = $1",
+            order.id.as_ref()
+        )
+        .execute(&mut *tx)
+        .await?;
+        tx.commit().await?;
+        count += 1;
+        tx = state.pool.begin().await?;
+    }
+
+    tx.commit().await?;
+
+    Ok(Json(count))
+}
+
 pub fn routes() -> Router<AppState> {
     Router::<AppState>::new()
         .route("/", get(list_orders).post(create_order))
         .route("/swish", post(swish))
+        .route("/email", post(email_tickets))
         .route("/:order_id", get(get_order).delete(cancel_order))
         .route("/:order_id/complete", post(complete_order))
         .route("/:order_id/tickets", get(get_tickets))

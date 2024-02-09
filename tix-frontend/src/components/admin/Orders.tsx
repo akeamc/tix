@@ -1,6 +1,6 @@
 "use client";
 
-import { Order, Ticket } from "@/lib/api";
+import { Order, Ticket, sendEmail } from "@/lib/api";
 import { useOrders, useTicketStats } from "@/lib/hooks";
 import classNames from "classnames";
 import { parsePhoneNumber } from "libphonenumber-js";
@@ -8,6 +8,7 @@ import { useState } from "react";
 import { RefreshCw } from "react-feather";
 import SwishImport from "./SwishImport";
 import Button from "../Button";
+import { useMutation } from "@tanstack/react-query";
 
 function formatDateTime(date: string) {
   return new Date(date).toLocaleString("sv", {
@@ -87,6 +88,9 @@ function Row({
             })
           : "-"}
       </td>
+      <td className="border px-1 py-1.5 print:py-0.5">
+        {order.emailed_at ? formatDateTime(order.emailed_at) : "-"}
+      </td>
       {/* <td className="border px-1 py-1.5 text-right">
         {order.amount.toLocaleString("sv", {
           maximumFractionDigits: 2,
@@ -97,11 +101,14 @@ function Row({
   );
 }
 
-type Ordering = "created_at" | "scanned_at";
-
 function Toolbar() {
   const { isFetching, refetch, error, data } = useOrders();
   const { data: ticketStats } = useTicketStats();
+  const {mutate: runSendEmail, data: emailsSent} = useMutation({
+    mutationKey: ["sendEmail"],
+    mutationFn: sendEmail,
+    onSuccess: () => refetch(),
+  });
   const scannedTickets = data?.flatMap((order) =>
     order.tickets.filter((ticket) => ticket.scanned_at),
   );
@@ -118,6 +125,10 @@ function Toolbar() {
         </div>
       )}
       <SwishImport />
+      <Button onClick={() => runSendEmail()}>
+        Skicka mejl
+        {typeof emailsSent === "number" ? ` (${emailsSent})` : ""}
+      </Button>
       {data && (
         <div className="text-xs text-gray-700">
           {scannedTickets?.length} skannade av {ticketStats?.paid} sålda
@@ -153,6 +164,7 @@ export default function Orders() {
                 Biljettnummer
               </th>
               <th className="p-1 py-2 text-left font-semibold">Skannad</th>
+              <th className="p-1 py-2 text-left font-semibold">Biljetter mejlade</th>
               {/* <th className="p-1 py-2 text-left font-semibold">Pris</th> */}
             </tr>
           </thead>

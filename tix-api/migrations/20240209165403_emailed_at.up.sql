@@ -1,0 +1,1 @@
+ALTER TABLE orders ADD COLUMN emailed_at TIMESTAMPTZ;

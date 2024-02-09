@@ -65,6 +65,8 @@ pub struct Order {
     pub paid_at: Option<OffsetDateTime>,
     #[serde(with = "time::serde::rfc3339::option")]
     pub canceled_at: Option<OffsetDateTime>,
+    #[serde(with = "time::serde::rfc3339::option")]
+    pub emailed_at: Option<OffsetDateTime>,
 }
 
 #[derive(Debug, thiserror::Error)]
