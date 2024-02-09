@@ -105,8 +105,8 @@ export default function ScanResult({
   }
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center">
-      <div className="my-auto">
+    <>
+      <div className="flex flex-1 flex-col items-center justify-center">
         <Icon
           invalid={invalid}
           alreadyScanned={data?.already_scanned ?? false}
@@ -139,6 +139,6 @@ export default function ScanResult({
         )}
       </div>
       <code className="text-sm text-gray-500">{id}</code>
-    </div>
+    </>
   );
 }
