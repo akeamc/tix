@@ -63,7 +63,7 @@ export default function ScanResult({
   id?: string;
   dismiss: () => void;
 }) {
-  const { data, mutate, isSuccess, isError } = useMutation({
+  const { data, mutate, isSuccess, error } = useMutation({
     mutationKey: ["tickets", id, "scan"],
     mutationFn: () => scanTicket(id!),
     retry: 1, // retry once
@@ -81,9 +81,11 @@ export default function ScanResult({
     // show spinner
     return (
       <div className="flex flex-1 flex-col items-center justify-center text-sm text-gray-500">
-        {isError ? (
+        {error ? (
           <p className="my-auto max-w-80 text-center text-lg text-red-500">
             Ett fel uppstod. Prova att skanna igen eller kontakta support (Åke).
+
+            {error.message}
           </p>
         ) : (
           <svg
