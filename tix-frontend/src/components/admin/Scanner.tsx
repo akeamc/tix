@@ -20,7 +20,11 @@ export default function Scanner() {
       video.current!,
       (result) => {
         if (!result.data) return; // it returns an empty string sometimes
-        setDecoded((prev) => prev ?? result.data);
+        setDecoded((prev) => {
+          if (prev !== null) return prev;
+          navigator.vibrate?.(200);
+          return result.data;
+        });
       },
       {
         calculateScanRegion: (video) => {

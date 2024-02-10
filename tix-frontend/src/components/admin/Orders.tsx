@@ -104,7 +104,7 @@ function Row({
 function Toolbar() {
   const { isFetching, refetch, error, data } = useOrders();
   const { data: ticketStats } = useTicketStats();
-  const {mutate: runSendEmail, data: emailsSent} = useMutation({
+  const { mutate: runSendEmail, data: emailsSent } = useMutation({
     mutationKey: ["sendEmail"],
     mutationFn: sendEmail,
     onSuccess: () => refetch(),
@@ -164,7 +164,9 @@ export default function Orders() {
                 Biljettnummer
               </th>
               <th className="p-1 py-2 text-left font-semibold">Skannad</th>
-              <th className="p-1 py-2 text-left font-semibold">Biljetter mejlade</th>
+              <th className="p-1 py-2 text-left font-semibold">
+                Biljetter mejlade
+              </th>
               {/* <th className="p-1 py-2 text-left font-semibold">Pris</th> */}
             </tr>
           </thead>
