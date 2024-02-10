@@ -8,7 +8,7 @@ export function useTickets(id?: string, email?: string) {
     queryKey: ["orders", id, "tickets"],
     enabled: !!id,
     queryFn: () => getTickets(id!, email!),
-    refetchInterval: 1000,
+    refetchInterval: 2000,
   });
 }
 
